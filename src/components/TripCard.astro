@@ -1,0 +1,42 @@
+---
+import Icon from './Icon.astro';
+import Photo from './Photo.astro';
+import Badge from './Badge.astro';
+import Note from './Note.astro';
+import SaveButton from './SaveButton.astro';
+import { LABEL } from '../data/trips.js';
+
+interface Props {
+  trip: any;
+  /** Discover variant: match score, why it matched, Save button. */
+  match?: boolean;
+}
+
+const { trip, match = false } = Astro.props;
+const href = `/trips/${trip.id}/`;
+---
+<article class:list={['trip-card', match ? 'is-match' : 'is-linked']} data-trip-id={trip.id}>
+  <Photo label={trip.photo} tone={trip.tone} image={trip.image} height={match ? 124 : 176} isNew={match && trip.isNew} />
+  <div class="trip-body">
+    <span class="trip-chain">
+      {trip.get.map((mode: string) => <span><Icon name={mode as any} size={14} strokeWidth={1.9} />{LABEL[mode].toUpperCase()}</span>)}
+      <span>→ {trip.do.map((a: string) => LABEL[a].toUpperCase()).join(' · ')}</span>
+    </span>
+    <h3 class="trip-title"><a href={href}>{trip.title}</a></h3>
+    <p class="trip-place">{match ? `${trip.place} · ${trip.season} · ${trip.length}` : trip.place}</p>
+    <div class="trip-ready">
+      <Badge req={trip.req} />
+      <Note req={trip.req} notes={trip.notes} />
+    </div>
+    {match && (
+      <Fragment>
+        <div class="match"><div class="match-bar"><span class="js-bar"></span></div><span class="mono js-score"></span></div>
+        <span class="trip-why js-why"></span>
+        <div class="trip-actions">
+          <a class="btn btn-dark" href={href}>Details</a>
+          <SaveButton id={trip.id} />
+        </div>
+      </Fragment>
+    )}
+  </div>
+</article>

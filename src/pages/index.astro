@@ -1,0 +1,170 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import TripCard from '../components/TripCard.astro';
+import TrackSteps from '../components/TrackSteps.astro';
+import { TRIPS, LABEL } from '../data/trips.js';
+import { TRACKS } from '../data/skills.js';
+import { STATS, HOME_TILES, ENTRY_KINDS, fmt } from '../data/logbook.js';
+
+const featured = ['catalina', 'johnson', 'sucia', 'tortugas'].map(id => TRIPS.find(t => t.id === id)).filter(Boolean);
+const learning = TRACKS.filter(t => t.key === 'fly' || t.key === 'dive');
+const entries = (await getCollection('entries', e => !e.data.draft))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 3);
+const builder = {
+  get: { legend: 'Get there by', options: ['fly', 'sail', 'paddle', 'drive'], on: 'fly' },
+  do: { legend: 'When you arrive', options: ['camp', 'dive', 'spearfish', 'hike'], on: 'camp' },
+};
+const elements = [
+  { name: 'Land', icon: 'hike', items: 'Hiking · Camping · Track days · Shooting' },
+  { name: 'Sea', icon: 'sail', items: 'Sailing · Scuba · Spearfishing' },
+  { name: 'Air', icon: 'fly', items: 'Flight training · Cross-countries · Fly-ins' },
+  { name: 'Workshop', icon: 'chip', items: 'Woodworking · PCB design · Gear I built for trips' },
+] as const;
+const monthYear = (d: Date) => d.toLocaleDateString('en-US', { month: 'short', year: 'numeric', timeZone: 'UTC' });
+---
+<Base title="Waypoints" footerNote="Trips are posted after I'm home.">
+  <section class="hero">
+    <svg class="hero-topo" viewBox="0 0 1440 640" preserveAspectRatio="xMidYMid slice" fill="none" stroke="#d3dad0" stroke-width="1.25" aria-hidden="true">
+      <path d="M-20 520 C 220 470, 420 580, 660 510 S 1080 400, 1460 460" />
+      <path d="M-20 560 C 230 510, 430 620, 670 550 S 1090 440, 1460 500" />
+      <path d="M-20 600 C 240 550, 440 660, 680 590 S 1100 480, 1460 540" />
+      <ellipse cx="1180" cy="190" rx="300" ry="160" transform="rotate(-10 1180 190)" />
+      <ellipse cx="1180" cy="190" rx="225" ry="118" transform="rotate(-10 1180 190)" />
+      <ellipse cx="1180" cy="190" rx="150" ry="78" transform="rotate(-10 1180 190)" />
+      <ellipse cx="1180" cy="190" rx="80" ry="40" transform="rotate(-10 1180 190)" />
+      <ellipse cx="160" cy="120" rx="180" ry="90" transform="rotate(8 160 120)" />
+      <ellipse cx="160" cy="120" rx="110" ry="52" transform="rotate(8 160 120)" />
+    </svg>
+    <div class="wrap hero-inner">
+      <div class="hero-copy">
+        <span class="eyebrow">Land · Sea · Air · Workshop</span>
+        <h1 class="display hero-title"><span>Fly in. Sail in.</span><span class="accent">Camp where you land.</span></h1>
+        <p class="lead">A logbook of the trips I take, the skills I'm learning, and the combos I want to try next: fly-in camping, sail-to-camp islands, and diving or spearfishing once I get there.</p>
+        <div class="actions">
+          <a class="btn btn-dark btn-lg" href="/discover/">Find my next combo<Icon name="arrow" strokeWidth={2} /></a>
+          <a class="btn btn-outline btn-lg" href="/logbook/">Read the logbook</a>
+        </div>
+      </div>
+
+      <div class="card builder" id="builder">
+        <span class="eyebrow-sm">Build a combo</span>
+        {Object.entries(builder).map(([kind, group]) => (
+          <fieldset>
+            <legend>{group.legend}</legend>
+            <div class="chips">
+              {group.options.map(value => (
+                <button type="button" class="chip" data-builder={kind} data-value={value} aria-pressed={String(value === group.on)}>
+                  <Icon name={value} />{LABEL[value]}
+                </button>
+              ))}
+            </div>
+          </fieldset>
+        ))}
+        <a class="btn btn-primary btn-block btn-lg" id="builder-go" href="/discover/?get=fly&do=camp">Show matching trips<Icon name="arrow" strokeWidth={2} /></a>
+        <p class="small muted" style="margin: 0">Ranked for your skills: ready now, with an instructor or guide, or a goal trip to work toward.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap section" id="combos">
+    <div class="section-head">
+      <div class="stack">
+        <span class="eyebrow">Recommended for you</span>
+        <h2 class="display h2">Combos to try next</h2>
+      </div>
+      <a class="lnk" href="/discover/">See all combos →</a>
+    </div>
+    <div class="grid-cards">
+      {featured.map(trip => <TripCard trip={trip} />)}
+    </div>
+  </section>
+
+  <section class="night">
+    <div class="wrap section split">
+      <div class="stack" style="flex: 1 1 520px; gap: 24px">
+        <div class="stack">
+          <span class="eyebrow">Learning now</span>
+          <h2 class="display h2">Every skill unlocks new trips</h2>
+          <p class="lead">The recommender reads these. Move a skill forward and goal trips turn into ready-now trips.</p>
+        </div>
+        {learning.map(track => <TrackSteps track={track} />)}
+        <a class="lnk" href="/logbook/">Update my skills →</a>
+      </div>
+      <div class="stack" style="flex: 1 1 380px; gap: 24px">
+        <div class="stack">
+          <span class="eyebrow">Logbook totals</span>
+          <h2 class="display h2">So far</h2>
+        </div>
+        <div class="tiles">
+          {HOME_TILES.map(key => (
+            <div class="tile">
+              <span class="tile-value">{fmt(STATS[key].value)}</span>
+              <span class="tile-label">{STATS[key].label}</span>
+            </div>
+          ))}
+        </div>
+        <a class="lnk" href="/logbook/">Open the full logbook →</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="wrap section" id="elements" style="padding-bottom: 48px">
+    <div class="section-head">
+      <div class="stack">
+        <span class="eyebrow">Explore by element</span>
+        <h2 class="display h2">Land, sea, air and the workshop</h2>
+      </div>
+    </div>
+    <div class="grid-cards" style="gap: 20px">
+      {elements.map(el => (
+        <a class="card element" href="/entries/">
+          <span class="icon-tile"><Icon name={el.icon} size={24} /></span>
+          <span class="element-name">{el.name}</span>
+          <span class="muted" style="font-size: 15px">{el.items}</span>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <section class="wrap" style="padding-block: 48px 96px">
+    <div class="section-head" style="margin-bottom: 24px">
+      <h2 class="display h3">Latest entries</h2>
+      <a class="lnk" href="/entries/">All entries →</a>
+    </div>
+    {entries.length ? (
+      <div class="rows">
+        {entries.map(entry => (
+          <a class="row" href={`/entries/${entry.id}/`}>
+            <span class="row-kind">{ENTRY_KINDS[entry.data.kind]}</span>
+            <span class="row-main">{entry.data.title}</span>
+            <span class="row-meta mono">{monthYear(entry.data.date)}</span>
+          </a>
+        ))}
+      </div>
+    ) : (
+      <p class="empty-row">No entries yet. Trip reports, builds and skill logs will show up here.</p>
+    )}
+  </section>
+
+  <script>
+    const box = document.getElementById('builder');
+    const go = document.getElementById('builder-go') as HTMLAnchorElement | null;
+    if (box && go) {
+      const picked = (kind: string) =>
+        [...box.querySelectorAll<HTMLElement>(`[data-builder="${kind}"][aria-pressed="true"]`)].map(b => b.dataset.value).join(',');
+      const update = () => {
+        go.href = `/discover/?${new URLSearchParams({ get: picked('get'), do: picked('do') })}`;
+      };
+      box.addEventListener('click', event => {
+        const chip = (event.target as Element).closest('[data-builder]');
+        if (!chip) return;
+        chip.setAttribute('aria-pressed', String(chip.getAttribute('aria-pressed') !== 'true'));
+        update();
+      });
+      update();
+    }
+  </script>
+</Base>

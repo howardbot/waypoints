@@ -1,0 +1,151 @@
+---
+import Base from '../../layouts/Base.astro';
+import Icon from '../../components/Icon.astro';
+import Photo from '../../components/Photo.astro';
+import Badge from '../../components/Badge.astro';
+import Note from '../../components/Note.astro';
+import SaveButton from '../../components/SaveButton.astro';
+import { TRIPS, LABEL } from '../../data/trips.js';
+
+export function getStaticPaths() {
+  return TRIPS.map(trip => ({ params: { id: trip.id }, props: { trip } }));
+}
+
+const { trip } = Astro.props as { trip: any };
+const chain = `${trip.get.map((m: string) => LABEL[m].toUpperCase()).join(' · ')} → ${trip.do.map((a: string) => LABEL[a].toUpperCase()).join(' · ')}`;
+const glance = [['Get there', trip.get.map((m: string) => LABEL[m]).join(' · ')], ...(trip.glance ?? [])];
+const waysTitle = ['One way', 'Two ways', 'Three ways', 'Four ways', 'Five ways'][(trip.ways?.length ?? 1) - 1] ?? 'Ways';
+
+// Similar trips share the most activities and ways of getting there.
+const overlap = (t: any) => t.do.filter((a: string) => trip.do.includes(a)).length + t.get.filter((m: string) => trip.get.includes(m)).length;
+const similar = TRIPS.filter(t => t.id !== trip.id)
+  .map(t => ({ t, n: overlap(t) }))
+  .sort((a, b) => b.n - a.n)
+  .slice(0, 3)
+  .map(x => x.t);
+---
+<Base title={trip.short ?? trip.title} description={trip.summary}>
+  <section class="wrap page-intro">
+    <nav class="crumbs" aria-label="Breadcrumb"><a class="lnk" href="/discover/">Discover</a><span aria-hidden="true">/</span><span aria-current="page">{trip.short ?? trip.title}</span></nav>
+    <span class="chain-line">{chain}</span>
+    <h1 class="display detail-title">{trip.title}</h1>
+    <p class="muted" style="margin: 0; font-size: 17px">{trip.place} · {trip.season} · {trip.length}</p>
+    {trip.summary && <p class="lead">{trip.summary}</p>}
+    <div class="card callout">
+      <Badge req={trip.req} />
+      <Note req={trip.req} notes={trip.notes} class="callout-note" />
+    </div>
+    <div class="actions">
+      <SaveButton id={trip.id} text="Save to wishlist" savedText="Saved to wishlist" />
+      {trip.path && <a class="btn btn-primary" href="#path">See the path</a>}
+    </div>
+  </section>
+
+  <section class="wrap detail-hero">
+    <Photo label={trip.photo} tone={trip.tone} image={trip.image} height={440} />
+    <aside class="card glance" aria-label="At a glance">
+      <span class="eyebrow-sm">At a glance</span>
+      <dl>
+        {glance.map(([label, value]) => (
+          <div><dt>{label}</dt><dd>{value}</dd></div>
+        ))}
+      </dl>
+      {trip.headsUp && (
+        <div class="headsup"><Icon name="alert" size={20} strokeWidth={2} /><span>{trip.headsUp}</span></div>
+      )}
+    </aside>
+  </section>
+
+  {trip.ways && (
+    <section class="wrap" style="padding-bottom: 88px">
+      <h2 class="display h2" style="margin-bottom: 28px">{waysTitle} to get there</h2>
+      <div class="grid-cards dense">
+        {trip.ways.map((way: any) => (
+          <article class="card way">
+            <div class="way-top">
+              <span class="icon-tile" style="width: 48px; height: 48px"><Icon name={way.mode} size={24} /></span>
+              <Badge req={way.req} />
+            </div>
+            <h3 class="way-mode">{LABEL[way.mode]}</h3>
+            <p class="way-title">{way.title}</p>
+            <p class="way-detail">{way.detail}</p>
+            <p class="way-note">For you: <Note req={way.req} notes={way.notes} class="" /></p>
+          </article>
+        ))}
+      </div>
+    </section>
+  )}
+
+  {trip.path && (
+    <section id="path" class="night">
+      <div class="wrap section split">
+        <div class="stack" style="flex: 1 1 320px; gap: 14px">
+          <span class="eyebrow">Your path</span>
+          <h2 class="display h2">From first try to doing it yourself</h2>
+          <p class="lead">Each step unlocks as your skills move forward in the logbook.</p>
+        </div>
+        <ol class="path">
+          {trip.path.map((step: any, i: number) => (
+            <li>
+              <span class="path-num">{i + 1}</span>
+              <div class="path-body">
+                <span class="path-label">{step.label}</span>
+                <Badge req={step.req} guided={step.guided} goal="level" />
+              </div>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+  )}
+
+  {trip.pack && (
+    <section class="wrap" style="padding-block: 88px 40px">
+      <h2 class="display h2" style="margin-bottom: 28px">Pack list</h2>
+      <div class="grid-cards" style="gap: 20px">
+        {trip.pack.map((group: any) => (
+          <div class="card pack">
+            <span class="eyebrow">{group.group}</span>
+            <ul>{group.items.map((item: string) => <li>{item}</li>)}</ul>
+          </div>
+        ))}
+      </div>
+    </section>
+  )}
+
+  <section class="wrap stack" style="padding-block: 48px 40px; gap: 24px" data-videos={trip.id}>
+    <div class="stack">
+      <span class="eyebrow">Inspiration</span>
+      <h2 class="display h2">Seen it on YouTube?</h2>
+      <p class="muted" style="margin: 0">Save the videos that gave you the idea. They stay with this trip, in this browser.</p>
+    </div>
+    <form class="add-video" novalidate>
+      <div class="field">
+        <label for="video-url">Video link</label>
+        <input id="video-url" class="input" type="url" inputmode="url" placeholder="https://youtube.com/watch?v=…" aria-describedby="video-error" />
+      </div>
+      <button type="submit" class="btn btn-dark" style="border-radius: 10px">Add video</button>
+    </form>
+    <p class="form-error js-video-error" id="video-error" hidden>That doesn't look like a web link. Paste the full address, starting with https://</p>
+    <p class="empty-row js-video-empty">No videos saved for this trip yet.</p>
+    <div class="grid-cards js-video-list" style="gap: 20px"></div>
+  </section>
+
+  <section class="wrap" style="padding-block: 48px 96px">
+    <h2 class="display h3" style="margin-bottom: 20px">Similar combos</h2>
+    <div class="rows">
+      {similar.map(t => (
+        <a class="row" href={`/trips/${t.id}/`}>
+          <span class="row-main">{t.title}</span>
+          <span class="row-meta">{t.place}</span>
+          <Badge req={t.req} />
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <script>
+    import { initTripPage } from '../../lib/trip-page.js';
+    initTripPage();
+  </script>
+</Base>

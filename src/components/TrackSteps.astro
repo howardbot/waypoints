@@ -1,0 +1,39 @@
+---
+// One skill track as a row of steps. Interactive on the Logbook page, read-only elsewhere.
+import Icon from './Icon.astro';
+import { DEFAULT_SKILLS } from '../data/skills.js';
+
+interface Props {
+  track: any;
+  interactive?: boolean;
+  headingLevel?: 2 | 3;
+}
+
+const { track, interactive = false, headingLevel = 3 } = Astro.props;
+const level = DEFAULT_SKILLS[track.key as keyof typeof DEFAULT_SKILLS];
+const idx = track.levels.findIndex((l: any) => l.id === level);
+const Heading = `h${headingLevel}`;
+const pos = (i: number) => (i < idx ? 'done' : i === idx ? 'now' : 'todo');
+---
+<article class="track" data-track={track.key}>
+  <div class="track-head">
+    <Heading class="track-name"><span class="track-ic"><Icon name={track.icon} size={22} /></span>{track.name}</Heading>
+    <span class="track-level" data-track-level>{track.levels[idx]?.label}</span>
+  </div>
+  <ol class="steps" aria-label={`${track.name} level`}>
+    {track.levels.map((l: any, i: number) => (
+      <li>
+        {interactive ? (
+          <button type="button" class="step" data-level={l.id} data-pos={pos(i)} aria-pressed={String(i === idx)} aria-current={i === idx ? 'step' : undefined}>
+            <span class="step-bar"></span><span>{l.label}</span>
+          </button>
+        ) : (
+          <span class="step" data-level={l.id} data-pos={pos(i)} aria-current={i === idx ? 'step' : undefined}>
+            <span class="step-bar"></span><span>{l.label}</span>
+          </span>
+        )}
+      </li>
+    ))}
+  </ol>
+  <p class="track-next"><span class="tag">NEXT · </span><span data-track-unlock>{track.unlock[level]}</span></p>
+</article>

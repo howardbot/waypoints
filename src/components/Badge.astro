@@ -1,0 +1,23 @@
+---
+// Readiness pill. Rendered for the default skills; client.js updates it for yours.
+import Icon from './Icon.astro';
+import { stepStatus, levelLabel, STATE_LABEL } from '../lib/recommend.js';
+import { DEFAULT_SKILLS } from '../data/skills.js';
+
+interface Props {
+  req?: { skill: string; readyAt: string; guideAt?: string } | null;
+  guided?: boolean;
+  /** 'trip' shows "Goal trip" when locked; 'level' shows the level it unlocks at. */
+  goal?: 'trip' | 'level';
+}
+
+const { req = null, guided = false, goal = 'trip' } = Astro.props;
+const state = stepStatus({ req, guided }, DEFAULT_SKILLS);
+const goalLabel = goal === 'level' && req ? `At ${levelLabel(req.skill, req.readyAt)}` : STATE_LABEL.goal;
+---
+<span class="badge" data-state={state} data-req={JSON.stringify(req)} data-guided={String(guided)} data-goal-label={goalLabel}>
+  <Icon name="check" size={15} strokeWidth={2.25} class="bi bi-ready" />
+  <Icon name="guide" size={15} strokeWidth={2} class="bi bi-guided" />
+  <Icon name="lock" size={15} strokeWidth={2} class="bi bi-goal" />
+  <span class="badge-label">{state === 'goal' ? goalLabel : STATE_LABEL[state]}</span>
+</span>

@@ -1,0 +1,25 @@
+---
+import { ICONS } from '../lib/icons.js';
+
+interface Props {
+  name: keyof typeof ICONS;
+  size?: number;
+  strokeWidth?: number;
+  fill?: boolean;
+  class?: string;
+}
+
+const { name, size = 18, strokeWidth = 1.75, fill = false, class: className } = Astro.props;
+---
+<svg
+  class={className}
+  width={size}
+  height={size}
+  viewBox="0 0 24 24"
+  fill={fill ? 'currentColor' : 'none'}
+  stroke={fill ? 'none' : 'currentColor'}
+  stroke-width={strokeWidth}
+  stroke-linecap="round"
+  stroke-linejoin="round"
+  aria-hidden="true"
+><path d={ICONS[name]} /></svg>

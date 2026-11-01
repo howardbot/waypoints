@@ -1,0 +1,15 @@
+---
+// The one-line "what this means for you" text next to a badge.
+import { readiness } from '../lib/recommend.js';
+import { DEFAULT_SKILLS } from '../data/skills.js';
+
+interface Props {
+  req?: { skill: string; readyAt: string; guideAt?: string } | null;
+  notes: Record<string, string>;
+  class?: string;
+}
+
+const { req = null, notes, class: className = 'trip-note' } = Astro.props;
+const state = readiness(req, DEFAULT_SKILLS);
+---
+<span class:list={['js-note', className]} data-req={JSON.stringify(req)} data-notes={JSON.stringify(notes)}>{notes[state] ?? notes.ready}</span>

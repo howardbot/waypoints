@@ -1,0 +1,13 @@
+---
+interface Props {
+  note?: string;
+}
+
+const { note = 'Check local rules, permits and protected areas before every trip.' } = Astro.props;
+---
+<footer class="site-footer">
+  <div class="wrap">
+    <span class="footer-brand">WAYPOINTS</span>
+    <span class="small muted">{note}</span>
+  </div>
+</footer>

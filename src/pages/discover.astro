@@ -1,0 +1,96 @@
+---
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+import TripCard from '../components/TripCard.astro';
+import { TRIPS, LABEL, MODES, ACTIVITIES, REGIONS } from '../data/trips.js';
+import { TRACKS } from '../data/skills.js';
+
+const groups = [
+  { pref: 'get', legend: '1 · Get there by', options: MODES },
+  { pref: 'do', legend: '2 · When you arrive', options: ACTIVITIES },
+];
+const tabs = [
+  { id: 'all', label: 'All' },
+  { id: 'ready', label: 'Ready now' },
+  { id: 'guided', label: 'With a guide' },
+  { id: 'goal', label: 'Goal trips' },
+];
+---
+<Base title="Discover" description="Find your next adventure combo: how you get there, what you do when you arrive, ranked for your skills.">
+  <section class="wrap page-intro">
+    <span class="eyebrow">Combo recommender</span>
+    <h1 class="display h1">Find your next combo</h1>
+    <p class="lead">Pick how you want to get there and what you want to do once you arrive. Trips are ranked for the skills you have today, so you'll see what you can do now, what you can do with an instructor or guide, and what to work toward.</p>
+  </section>
+
+  <div class="wrap discover">
+    <aside class="card filters" aria-label="Filters">
+      {groups.map(group => (
+        <fieldset>
+          <legend class="eyebrow-sm">{group.legend}</legend>
+          <div class="chips">
+            {group.options.map(value => (
+              <button type="button" class="chip" data-pref={group.pref} data-value={value} aria-pressed="false">
+                <Icon name={value as any} />{LABEL[value]}
+              </button>
+            ))}
+          </div>
+        </fieldset>
+      ))}
+
+      <div class="field">
+        <label for="region" class="eyebrow-sm">3 · Where</label>
+        <select id="region" class="select">
+          {REGIONS.map(r => <option value={r.id}>{r.label}</option>)}
+        </select>
+      </div>
+
+      <div class="skills">
+        <div class="skills-head">
+          <span class="eyebrow-sm">Your skills</span>
+          <a class="lnk" href="/logbook/">Edit in logbook</a>
+        </div>
+        {TRACKS.map(track => (
+          <div class="field">
+            <label for={`skill-${track.key}`}>{track.name}</label>
+            <select id={`skill-${track.key}`} class="select" data-skill={track.key}>
+              {track.levels.map(l => <option value={l.id}>{l.label}</option>)}
+            </select>
+          </div>
+        ))}
+      </div>
+
+      <label class="surprise" for="surprise">
+        <input id="surprise" type="checkbox" checked />
+        <span><strong>Mix in things I've never tried</strong><span class="small muted">Boosts new-to-you ideas like canoe camping, freediving and seaplanes.</span></span>
+      </label>
+
+      <button type="button" class="btn btn-outline btn-block" id="reset">Clear filters</button>
+    </aside>
+
+    <div class="results">
+      <div class="results-bar">
+        <div class="tabs" role="group" aria-label="Readiness">
+          {tabs.map(tab => (
+            <button type="button" class="tab" data-tab={tab.id} aria-pressed={String(tab.id === 'all')}>{tab.label}<span class="js-count"></span></button>
+          ))}
+        </div>
+        <span class="mono small muted" id="summary" aria-live="polite"></span>
+      </div>
+
+      <div class="empty" id="empty" hidden>
+        <span class="display">Nothing here yet</span>
+        <span class="muted">Try another region or readiness tab, or clear your filters.</span>
+      </div>
+
+      <div class="grid-cards dense" id="results">
+        {TRIPS.map(trip => <TripCard trip={trip} match />)}
+      </div>
+    </div>
+  </div>
+
+  <script>
+    import { initDiscover } from '../lib/discover.js';
+    initDiscover();
+  </script>
+</Base>

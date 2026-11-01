@@ -1,0 +1,32 @@
+---
+// A trip photo, or a contour-line placeholder until you add one.
+import Icon from './Icon.astro';
+
+interface Props {
+  label: string;
+  tone?: string;
+  image?: string;
+  height?: number;
+  isNew?: boolean;
+  class?: string;
+}
+
+const { label, tone = '#1c3346', image, height = 176, isNew = false, class: className } = Astro.props;
+---
+<div class:list={['photo', className]} style={`--tone:${tone};height:${height}px`}>
+  {image ? (
+    <img src={image} alt={label} loading="lazy" />
+  ) : (
+    <Fragment>
+      <svg viewBox="0 0 400 176" preserveAspectRatio="none" fill="none" stroke="#ffffff" stroke-opacity="0.16" stroke-width="1.2" aria-hidden="true">
+        <path vector-effect="non-scaling-stroke" d="M-10 136 C 80 106, 150 156, 240 116 S 360 76, 410 96" />
+        <path vector-effect="non-scaling-stroke" d="M-10 156 C 90 126, 160 176, 250 136 S 370 96, 410 116" />
+        <ellipse vector-effect="non-scaling-stroke" cx="300" cy="60" rx="90" ry="40" />
+        <ellipse vector-effect="non-scaling-stroke" cx="300" cy="60" rx="55" ry="22" />
+        <ellipse vector-effect="non-scaling-stroke" cx="300" cy="60" rx="22" ry="8" />
+      </svg>
+      <span class="photo-label">PHOTO · {label}</span>
+    </Fragment>
+  )}
+  {isNew && <span class="new-tag"><Icon name="sparkle" size={13} strokeWidth={2} />NEW TO YOU</span>}
+</div>

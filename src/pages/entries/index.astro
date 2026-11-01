@@ -1,0 +1,30 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import { ENTRY_KINDS } from '../../data/logbook.js';
+
+const entries = (await getCollection('entries', e => !e.data.draft)).sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+const date = (d: Date) => d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' });
+---
+<Base title="Adventures">
+  <section class="wrap page-intro">
+    <span class="eyebrow">Adventures</span>
+    <h1 class="display h1">Trip reports, builds and skill logs</h1>
+    <p class="lead">Everything from the air, the water, the trail and the workshop, newest first.</p>
+  </section>
+  <section class="wrap" style="padding-bottom: 96px">
+    {entries.length ? (
+      <div class="rows">
+        {entries.map(entry => (
+          <a class="row" href={`/entries/${entry.id}/`}>
+            <span class="row-kind">{ENTRY_KINDS[entry.data.kind]}</span>
+            <span class="row-main">{entry.data.title}</span>
+            <span class="row-meta mono">{date(entry.data.date)}</span>
+          </a>
+        ))}
+      </div>
+    ) : (
+      <p class="empty-row">No entries yet. The first trip report goes here.</p>
+    )}
+  </section>
+</Base>

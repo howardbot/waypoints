@@ -1,0 +1,17 @@
+---
+import Icon from './Icon.astro';
+
+const path = Astro.url.pathname;
+const links = [
+  { href: '/discover/', label: 'Discover' },
+  { href: '/entries/', label: 'Adventures' },
+  { href: '/logbook/', label: 'Logbook' },
+];
+---
+<header class="site-header">
+  <a class="brand" href="/"><Icon name="compass" size={28} class="brand-ic" />WAYPOINTS</a>
+  <nav class="nav" aria-label="Main">
+    {links.map(l => <a href={l.href} aria-current={path.startsWith(l.href) ? 'page' : undefined}>{l.label}</a>)}
+  </nav>
+  <a class="btn btn-outline btn-sm" href="/logbook/#wishlist"><Icon name="bookmark" size={16} strokeWidth={2} />Wishlist · <span data-saved-count>0</span></a>
+</header>

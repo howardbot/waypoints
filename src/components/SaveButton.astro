@@ -1,0 +1,16 @@
+---
+import Icon from './Icon.astro';
+
+interface Props {
+  id: string;
+  text?: string;
+  savedText?: string;
+  class?: string;
+}
+
+const { id, text = 'Save', savedText = 'Saved', class: className } = Astro.props;
+---
+<button type="button" class:list={['btn btn-outline btn-save', className]} data-save={id} data-save-text={text} data-saved-text={savedText} aria-pressed="false">
+  <Icon name="bookmark" size={16} strokeWidth={2} />
+  <span class="js-save-label">{text}</span>
+</button>

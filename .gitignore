@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.astro/
+.DS_Store
+
+# Deploy settings (server address, SSH key path) stay on your machine
+.env.deploy
+*.pem
+
+# Local tooling
+.claude/
