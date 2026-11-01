@@ -49,7 +49,7 @@ rm -rf site.old
 # Tailnet-only HTTPS. Only this port's handler is touched; other Serve config stays as it is.
 sudo tailscale serve --bg --https="$ts_port" "http://127.0.0.1:$port" >/dev/null
 for _ in $(seq 1 20); do
-  if curl -fsS -o /dev/null "http://127.0.0.1:$port/"; then break; fi
+  if curl -fs -o /dev/null "http://127.0.0.1:$port/"; then break; fi
   sleep 0.5
 done
 curl -fsS -o /dev/null "http://127.0.0.1:$port/" && echo "Container is serving on 127.0.0.1:$port"
