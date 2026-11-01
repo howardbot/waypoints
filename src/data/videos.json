@@ -31,10 +31,10 @@
       "published": "2020-08-13"
     },
     {
-      "id": "B9f-IQWIorE",
-      "title": "Catalina Island Two Harbor Camping",
-      "channel": "Vhsofdafuture",
-      "published": "2024-08-10"
+      "id": "oZerOIkPqnc",
+      "title": "Two Harbors Campground, Catalina Island",
+      "channel": "Neon Smiley",
+      "published": "2026-03-17"
     }
   ],
   "johnson": [
@@ -63,16 +63,10 @@
       "published": "2020-06-03"
     },
     {
-      "id": "LoQaXGjh5Rk",
-      "title": "Flying in the Idaho Backcountry Just Got a WHOLE Lot Crazier",
-      "channel": "Trent Palmer",
-      "published": "2024-08-23"
-    },
-    {
-      "id": "1JL7yeQzYbo",
-      "title": "Flying Idaho Backcountry - Johnson Creek to Wilson Bar",
-      "channel": "Wheels in the Sky",
-      "published": "2024-01-29"
+      "id": "7nYse9DivwA",
+      "title": "N712AM The Previous Johnson Creek C206 Go Around (June 2024)",
+      "channel": "blancolirio",
+      "published": "2024-09-17"
     }
   ],
   "oshkosh": [
@@ -89,10 +83,10 @@
       "published": "2021-08-13"
     },
     {
-      "id": "O0jhionHVcU",
-      "title": "The secret way to do AirVenture in Oshkosh 🤫",
-      "channel": "Abingdon Co.",
-      "published": "2026-08-04"
+      "id": "egYhxYMoU2Y",
+      "title": "Camping With Aircraft at Oshkosh, Aviation’s Most Unique Campsite",
+      "channel": "AvPay",
+      "published": "2025-09-16"
     }
   ],
   "sucia": [
@@ -115,22 +109,22 @@
       "published": "2025-07-01"
     },
     {
-      "id": "e2zReZ9GyFU",
-      "title": "Sucia Island Camping Trip",
-      "channel": "Off Grid SolarBurrito",
-      "published": "2014-10-12"
-    },
-    {
-      "id": "dbi8ZR83ww4",
-      "title": "This island in the San Juans is a bucket-list place for boaters and campers",
-      "channel": "king5evening",
-      "published": "2023-07-21"
+      "id": "IX39v39bjUE",
+      "title": "Sucia island kayak camping 🏕️",
+      "channel": "Maddy Marquardt",
+      "published": "2026-05-11"
     },
     {
       "id": "ZrQ88CwURqQ",
       "title": "Long Weekend at Sucia Island",
       "channel": "Mark and Pam Adams Travel VLog",
       "published": "2026-01-06"
+    },
+    {
+      "id": "e2zReZ9GyFU",
+      "title": "Sucia Island Camping Trip",
+      "channel": "Off Grid SolarBurrito",
+      "published": "2014-10-12"
     }
   ],
   "tortugas": [
@@ -185,10 +179,10 @@
       "published": "2021-05-15"
     },
     {
-      "id": "jjDwy2lpD6c",
-      "title": "Slippy demands satisfaction! in order to get these 24 Lionfish I need to give up a couple of them!",
+      "id": "I2stl906kN8",
+      "title": "Lionfish hole found and wiped out!",
       "channel": "Lionfish Extermination Corp",
-      "published": "2026-04-22"
+      "published": "2024-04-17"
     }
   ],
   "boundary": [
@@ -281,24 +275,24 @@
       "published": "2021-07-26"
     },
     {
-      "id": "b0PZu4YWZYM",
-      "title": "Floatplane Camping on Wynoochee Lake",
-      "channel": "ChocolateDogs",
-      "published": "2022-01-07"
+      "id": "y1mfE__-xFg",
+      "title": "Flying and Camping at the Indiana Seaplane Splash-In!",
+      "channel": "The Commercial Pilot",
+      "published": "2024-11-24"
     }
   ],
   "track": [
-    {
-      "id": "rEnJD79Xe5U",
-      "title": "My First HPDE: All About HPDE (Track Day)",
-      "channel": "Cliff's Garage",
-      "published": "2021-03-23"
-    },
     {
       "id": "_PBAojM2_TI",
       "title": "Your First Track Day | Everything You Need to Know",
       "channel": "Grassroots Motorsports",
       "published": "2020-12-04"
+    },
+    {
+      "id": "rEnJD79Xe5U",
+      "title": "My First HPDE: All About HPDE (Track Day)",
+      "channel": "Cliff's Garage",
+      "published": "2021-03-23"
     },
     {
       "id": "S1zoS4v9X-g",
@@ -311,20 +305,26 @@
       "title": "Paddock Camping at the race track",
       "channel": "DeathsStalkerRVT",
       "published": "2018-04-05"
+    },
+    {
+      "id": "661KOLtwCvE",
+      "title": "Europe's most popular race tent!",
+      "channel": "24MX",
+      "published": "2024-03-04"
     }
   ],
   "bahamas": [
-    {
-      "id": "qviZojTJll4",
-      "title": "I’m Flying Myself To The BAHAMAS!",
-      "channel": "Fly With Bruno",
-      "published": "2023-12-20"
-    },
     {
       "id": "BGfcctSyG7A",
       "title": "Flying to the Bahamas | A/C & Pilot Requirements",
       "channel": "Aviator Zone",
       "published": "2018-05-26"
+    },
+    {
+      "id": "qviZojTJll4",
+      "title": "I’m Flying Myself To The BAHAMAS!",
+      "channel": "Fly With Bruno",
+      "published": "2023-12-20"
     },
     {
       "id": "ONyg0hdKDJg",
@@ -339,16 +339,16 @@
       "published": "2024-06-11"
     },
     {
-      "id": "WK7ECesUd38",
-      "title": "HAWAIIAN SLING vs POLESPEAR | What's better? | Epic KILLSHOTS!! | Giveaway Winner! | Ep. 92",
+      "id": "gjl99XgbMEg",
+      "title": "Hawaiian Sling SPEARFISHING At 103 FEET! | SHARKS Come at me while landing MONSTERS! | Ep. 111",
       "channel": "Captain Jack Spearo",
-      "published": "2021-02-21"
+      "published": "2021-08-09"
     },
     {
-      "id": "CC1yim6jfm0",
-      "title": "Spearfishing Bahamas Hawaiian Sling Stocking Island",
-      "channel": "SV Rondo",
-      "published": "2025-03-16"
+      "id": "86jDI6HKJLk",
+      "title": "I Can’t BELIEVE IT! | My BIGGEST FISH On Polespear! | Bahamas Catch n Cook",
+      "channel": "Captain Jack Spearo",
+      "published": "2025-05-13"
     }
   ],
   "whitsundays": [
@@ -359,16 +359,22 @@
       "published": "2020-09-20"
     },
     {
-      "id": "QcvQVEduOdo",
-      "title": "SAIL THE WHITSUNDAYS WITH US - BAREBOAT CHARTER A CATAMARAN",
-      "channel": "Undone by Dayle",
-      "published": "2026-05-01"
-    },
-    {
       "id": "Ji7xPLy0DWs",
       "title": "Whitsunday Islands by Bareboat: A Week in Paradise, No Licence Needed",
       "channel": "Cumberland Charter Yachts Whitsundays",
       "published": "2026-08-20"
+    },
+    {
+      "id": "iB5vHc9qy5s",
+      "title": "Whitsundays Bareboat Charter - Part 1 Not all smooth sailing",
+      "channel": "Go with the flow",
+      "published": "2024-01-14"
+    },
+    {
+      "id": "EQMSassFdCE",
+      "title": "CAMP with me on WHITEHAVEN BEACH I Whitsunday travel vlog",
+      "channel": "Emma Sjoeberg",
+      "published": "2024-12-22"
     },
     {
       "id": "NJei-uc2yM0",
@@ -377,16 +383,10 @@
       "published": "2023-03-29"
     },
     {
-      "id": "Odyw3HwLL98",
-      "title": "Camping on Whitehaven Beach | White Sand and Tropical Swimming",
-      "channel": "Campr",
-      "published": "2018-07-27"
-    },
-    {
-      "id": "EQMSassFdCE",
-      "title": "CAMP with me on WHITEHAVEN BEACH I Whitsunday travel vlog",
-      "channel": "Emma Sjoeberg",
-      "published": "2024-12-22"
+      "id": "otxLSJW7MJ8",
+      "title": "Tinny Camping In The Whitsunday Islands",
+      "channel": "Offgrid Travelling",
+      "published": "2023-12-16"
     }
   ],
   "espiritu": [
@@ -429,16 +429,16 @@
       "published": "2026-08-19"
     },
     {
+      "id": "FGCQCQ8ywkY",
+      "title": "Traveling in Sinai: this lagoon in Ras Abu Galum is a hidden gem #travel #digitalnomad",
+      "channel": "Michelle Marie Travels",
+      "published": "2023-03-20"
+    },
+    {
       "id": "hKtv98dV5kM",
       "title": "5 Minute Dive in Dahab | Ras Abu Galum & Blue Hole 🇪🇬",
       "channel": "Abby",
       "published": "2025-12-14"
-    },
-    {
-      "id": "-PhLGob0s-8",
-      "title": "Boat trip to Ras Abu Galum near Dahab, Egypt. You can stay in the stick houses on the beach. #dahab",
-      "channel": "Sophie & dogs",
-      "published": "2024-05-26"
     },
     {
       "id": "QOEx1JMyEec",
@@ -461,22 +461,22 @@
   ],
   "abeltasman": [
     {
-      "id": "TMwi-EhSmlI",
-      "title": "How To Kayak Abel Tasman Better Than Other Tourists (Locals Know)",
-      "channel": "Virtual Journeys with Michael Nees",
-      "published": "2024-10-30"
-    },
-    {
       "id": "qPO6OGwWlUM",
       "title": "Kayaking Abel Tasman National Park Tour with R&R Kayaks",
       "channel": "Virtual Journeys with Michael Nees",
       "published": "2021-08-09"
     },
     {
-      "id": "0XrRBIiJrXc",
-      "title": "1-Day Kayaking in Abel Tasman National Park (HOW MUCH CAN WE SEE?)",
-      "channel": "Matt and Danielle | CouplesQuest_",
-      "published": "2025-05-25"
+      "id": "njk4py28Hrw",
+      "title": "Find Your Rhythm | Abel Tasman National Park #abeltasmankayaks",
+      "channel": "Abel Tasman Kayaks",
+      "published": "2025-12-04"
+    },
+    {
+      "id": "TMwi-EhSmlI",
+      "title": "How To Kayak Abel Tasman Better Than Other Tourists (Locals Know)",
+      "channel": "Virtual Journeys with Michael Nees",
+      "published": "2024-10-30"
     },
     {
       "id": "J0E-BZfrxpo",
@@ -511,10 +511,10 @@
       "published": "2026-07-25"
     },
     {
-      "id": "QPcnyZFGrGw",
-      "title": "Alaskan Bush Plane | Lake Clark National Park, Alaska | 4K",
-      "channel": "Caleb Clark Photography",
-      "published": "2026-09-10"
+      "id": "Scl_Sxa8RN4",
+      "title": "Alaska's Hidden Paradise - Lake Clark National Park by Float Plane",
+      "channel": "Semi-Wild Alaska",
+      "published": "2025-03-28"
     },
     {
       "id": "93zzKz-2PZU",
@@ -523,10 +523,16 @@
       "published": "2025-11-08"
     },
     {
-      "id": "UmdMZSQUEcQ",
-      "title": "4 days Packrafting 50 miles in the Alaskan Backcountry | Tlikakila Lake Clark",
-      "channel": "Michael Smith Whitewater",
-      "published": "2025-11-04"
+      "id": "EVdtci5ZZH8",
+      "title": "10-Days Backpacking in Alaska's Lake Clark National Park",
+      "channel": "Bearfoot Theory",
+      "published": "2017-09-25"
+    },
+    {
+      "id": "qXndiFJEZ8I",
+      "title": "3 Days in Lake Clark National Park in Alaska (+ best things to do)",
+      "channel": "Raarup Adventures (Deborah + Tyler)",
+      "published": "2024-08-25"
     }
   ],
   "nurburgring": [
@@ -553,6 +559,12 @@
       "title": "ULTIMATE Nürburgring 24h Guide 2026 / Tickets, Camping & Track Zones Explained",
       "channel": "ChlievCinema",
       "published": "2023-04-22"
+    },
+    {
+      "id": "X_nBMmhNRzs",
+      "title": "Ravenol 24H Nurburgring 2026 - Camping Hatzenbach",
+      "channel": "Red Racing",
+      "published": "2026-05-13"
     }
   ],
   "torres": [
@@ -597,16 +609,16 @@
   ],
   "bvi": [
     {
-      "id": "UpMZatSzLuI",
-      "title": "7 Day Yacht Charter in The British Virgin Islands...",
-      "channel": "HELM",
-      "published": "2023-12-07"
-    },
-    {
       "id": "Sr7rVOmowEk",
       "title": "Sailing the BVIs: 10 Tips You Need to Know | Step 435",
       "channel": "Sailing Uma",
       "published": "2025-04-05"
+    },
+    {
+      "id": "UpMZatSzLuI",
+      "title": "7 Day Yacht Charter in The British Virgin Islands...",
+      "channel": "HELM",
+      "published": "2023-12-07"
     },
     {
       "id": "EghcY-iQja8",
@@ -627,10 +639,10 @@
       "published": "2017-06-02"
     },
     {
-      "id": "r09VpggTdLo",
-      "title": "RMS Rhone Wreck Dive, British Virgin Islands",
-      "channel": "S/V AQUA",
-      "published": "2014-08-17"
+      "id": "UQffZKFs4po",
+      "title": "The Unfortunate Fate of the RMS Rhone",
+      "channel": "Maritime Horrors",
+      "published": "2024-06-10"
     }
   ],
   "palawan": [
@@ -641,34 +653,34 @@
       "published": "2025-09-09"
     },
     {
-      "id": "zBlhRulkLLk",
-      "title": "PERFECTION in the PHILIPPINES 🇵🇭 (TAO EXPERIENCE) El Nido - Coron",
-      "channel": "Paddy Doyle",
-      "published": "2023-04-21"
-    },
-    {
       "id": "RRhtZMh4wZg",
       "title": "Tao Philippines - From Coron To El Nido",
       "channel": "Silvan Pawli",
       "published": "2025-02-28"
     },
     {
-      "id": "miRDA1lmCgU",
-      "title": "How To Plan A Boat Trip From El Nido To Coron (3-Day Island Hopping Expedition)",
-      "channel": "Two Roaming Souls - Jake & Emily",
-      "published": "2026-03-22"
-    },
-    {
-      "id": "AECulxK8gjY",
-      "title": "The ULTIMATE Philippines Experience! ⛵️ 3 Day Boat from Coron to El Nido 🇵🇭",
-      "channel": "James and Nicole",
-      "published": "2025-01-19"
+      "id": "zBlhRulkLLk",
+      "title": "PERFECTION in the PHILIPPINES 🇵🇭 (TAO EXPERIENCE) El Nido - Coron",
+      "channel": "Paddy Doyle",
+      "published": "2023-04-21"
     },
     {
       "id": "U85SNutRgWM",
       "title": "4 days island hopping from Coron to El Nido with Big Dream Boatman | The Philippines",
       "channel": "walkerlust",
       "published": "2025-03-25"
+    },
+    {
+      "id": "HnGGnMnFdys",
+      "title": "I Spent 3 Days Sailing Through the Philippines 🇵🇭 | El Nido to Coron",
+      "channel": "Louis Macipe",
+      "published": "2026-08-16"
+    },
+    {
+      "id": "t7JvQg-2aPk",
+      "title": "INCREDIBLE Linapacan ISLAND HOPPING Expedition 🌴 (Coron to El Nido Boat Tour)",
+      "channel": "MarcCarva",
+      "published": "2025-03-13"
     }
   ]
 }
