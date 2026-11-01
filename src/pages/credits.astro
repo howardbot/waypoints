@@ -1,0 +1,26 @@
+---
+import Base from '../layouts/Base.astro';
+import { TRIPS } from '../data/trips.js';
+import { PHOTOS } from '../data/photos.js';
+
+const rows = TRIPS.filter(t => !t.image && PHOTOS[t.id as keyof typeof PHOTOS]).map(t => ({ trip: t, photo: PHOTOS[t.id as keyof typeof PHOTOS] }));
+---
+<Base title="Photo credits">
+  <section class="wrap page-intro">
+    <span class="eyebrow">Credits</span>
+    <h1 class="display h1">Photo credits</h1>
+    <p class="lead">Trip photos come from Wikimedia Commons under the licenses below, until I replace them with my own.</p>
+  </section>
+  <section class="wrap" style="padding-bottom: 96px">
+    <div class="rows">
+      {rows.map(({ trip, photo }) => (
+        <div class="row">
+          <a class="row-main lnk" href={`/trips/${trip.id}/`}>{trip.title}</a>
+          <span class="row-meta"><a class="lnk" href={photo.page} rel="noopener">{photo.author || 'Wikimedia Commons'}</a></span>
+          <span class="row-state">{photo.licenseUrl ? <a href={photo.licenseUrl} rel="license noopener">{photo.license}</a> : photo.license}</span>
+        </div>
+      ))}
+    </div>
+    <p class="small muted" style="margin-top: 24px">Icons adapted from Lucide (ISC). Fonts: Barlow Condensed and IBM Plex (SIL Open Font License).</p>
+  </section>
+</Base>

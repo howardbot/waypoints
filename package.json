@@ -9,7 +9,8 @@
     "build": "astro build",
     "preview": "astro preview",
     "test": "node --test tests/",
-    "deploy": "bash scripts/deploy.sh"
+    "deploy": "bash scripts/deploy.sh",
+    "videos": "node scripts/fetch-videos.mjs"
   },
   "dependencies": {
     "astro": "5.18.2"

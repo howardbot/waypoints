@@ -39,13 +39,33 @@ Scores add up from four parts ([`src/lib/recommend.js`](src/lib/recommend.js)):
 
 Your skill levels, saved trips and saved video links stay in the browser (`localStorage`). There are no accounts and no backend.
 
+## Trips, photos and sources
+
+The catalog covers 21 trips worldwide: the US (including Alaska), the Caribbean, Mexico and Latin America, Europe, Africa and the Middle East, Asia, and Australia and New Zealand. The Discover page filters by region; "United States (all)" covers every US region.
+
+- **Sources:** every trip lists the pages its facts come from (park services, airports, regulators), shown at the bottom of the trip page. Rules, prices and seasons change, so check them before a trip.
+- **Photos:** every trip has a freely licensed photo from Wikimedia Commons ([`src/data/photos.js`](src/data/photos.js)), credited on the trip page and on `/credits/`. To use your own, drop it in `public/photos/` and add `image: '/photos/name.jpg'` to the trip.
+
+## YouTube
+
+Each trip has `youtube` search terms:
+
+- **Watch on YouTube links** (free, no setup): open YouTube's live search for each term, so results are always current.
+- **Recommended videos on the page** (free, needs a key): create a YouTube Data API v3 key in Google Cloud, then run
+
+  ```bash
+  YOUTUBE_API_KEY=your-key npm run videos
+  ```
+
+  This writes the top results to `src/data/videos.json`. Commit that file and deploy; the key stays on your machine. A full refresh uses about 40 searches, roughly 4,000 of the free 10,000 daily quota units.
+- **Your saved videos:** paste any link on a trip page to keep it with that trip.
+
 ## Make it yours
 
-- **Add a trip:** copy an object in `src/data/trips.js`. Run `npm test` and it checks that ids, skills and levels line up.
+- **Add a trip:** copy an object in `src/data/trips.js`. Run `npm test` and it checks ids, skills, levels, photos and sources.
 - **Your numbers:** replace the `null` values in `src/data/logbook.js`.
 - **Skill tracks and unlock text:** `src/data/skills.js`.
 - **Write an entry:** copy `src/content/entries/example-entry.md`, then set `draft: false`.
-- **Photos:** put them in `public/photos/` and add `image: '/photos/name.jpg'` to a trip.
 
 ## Develop
 
@@ -72,4 +92,4 @@ Before the first deploy:
 
 ## Credits
 
-Icons adapted from [Lucide](https://lucide.dev) (ISC). Fonts: Barlow Condensed and IBM Plex (SIL Open Font License), via Google Fonts.
+Trip photos from Wikimedia Commons; authors and licenses are listed on the site's `/credits/` page. Icons adapted from [Lucide](https://lucide.dev) (ISC). Fonts: Barlow Condensed and IBM Plex (SIL Open Font License), via Google Fonts.

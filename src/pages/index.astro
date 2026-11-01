@@ -8,7 +8,7 @@ import { TRIPS, LABEL } from '../data/trips.js';
 import { TRACKS } from '../data/skills.js';
 import { STATS, HOME_TILES, ENTRY_KINDS, fmt } from '../data/logbook.js';
 
-const featured = ['catalina', 'johnson', 'sucia', 'tortugas'].map(id => TRIPS.find(t => t.id === id)).filter(Boolean);
+const featured = ['catalina', 'johnson', 'bahamas', 'whitsundays'].map(id => TRIPS.find(t => t.id === id)).filter(Boolean);
 const learning = TRACKS.filter(t => t.key === 'fly' || t.key === 'dive');
 const entries = (await getCollection('entries', e => !e.data.draft))
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())

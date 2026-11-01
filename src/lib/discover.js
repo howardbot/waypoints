@@ -20,7 +20,8 @@ function readPrefs() {
 
 function whyText(result, prefs) {
   const hits = result.hits.map(k => LABEL[k]);
-  const text = hits.length ? `Matches ${hits.join(' + ')}` : 'Outside your picks, shown for ideas';
+  const picked = prefs.get.length + prefs.do.length > 0;
+  const text = hits.length ? `Matches ${hits.join(' + ')}` : picked ? 'Outside your picks, shown for ideas' : 'Ranked by readiness';
   return prefs.surprise && result.trip.isNew ? `New to you · ${text}` : text;
 }
 

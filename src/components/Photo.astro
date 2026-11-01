@@ -1,21 +1,27 @@
 ---
-// A trip photo, or a contour-line placeholder until you add one.
+// A trip photo: your own (`image`), the Commons one from photos.js, or a contour-line placeholder.
 import Icon from './Icon.astro';
 
 interface Props {
   label: string;
   tone?: string;
   image?: string;
+  photo?: { src: string; srcset?: string; alt: string };
+  sizes?: string;
   height?: number;
   isNew?: boolean;
+  eager?: boolean;
   class?: string;
 }
 
-const { label, tone = '#1c3346', image, height = 176, isNew = false, class: className } = Astro.props;
+const { label, tone = '#1c3346', image, photo, sizes = '(min-width: 1240px) 400px, (min-width: 700px) 50vw, 100vw', height = 176, isNew = false, eager = false, class: className } = Astro.props;
+const src = image ?? photo?.src;
+const srcset = image ? undefined : photo?.srcset || undefined;
+const alt = image ? label : photo?.alt ?? label;
 ---
 <div class:list={['photo', className]} style={`--tone:${tone};height:${height}px`}>
-  {image ? (
-    <img src={image} alt={label} loading="lazy" />
+  {src ? (
+    <img src={src} srcset={srcset} sizes={srcset ? sizes : undefined} alt={alt} loading={eager ? 'eager' : 'lazy'} decoding="async" referrerpolicy="no-referrer" />
   ) : (
     <Fragment>
       <svg viewBox="0 0 400 176" preserveAspectRatio="none" fill="none" stroke="#ffffff" stroke-opacity="0.16" stroke-width="1.2" aria-hidden="true">

@@ -29,7 +29,8 @@ export function stepStatus({ req, guided }, skills) {
 }
 
 export function inRegion(trip, region) {
-  return !region || region === 'any' || trip.region === 'any' || trip.region === region;
+  if (!region || region === 'any' || trip.region === 'any' || trip.region === region) return true;
+  return region === 'us' && trip.region.startsWith('us-');
 }
 
 /**

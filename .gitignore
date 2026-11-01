@@ -5,6 +5,7 @@ dist/
 
 # Deploy settings (server address, SSH key path) stay on your machine
 .env.deploy
+.env
 *.pem
 
 # Local tooling

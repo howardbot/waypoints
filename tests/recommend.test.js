@@ -3,6 +3,8 @@ import assert from 'node:assert/strict';
 import { readiness, stepStatus, recommend, levelIndex } from '../src/lib/recommend.js';
 import { TRIPS, MODES, ACTIVITIES, REGIONS } from '../src/data/trips.js';
 import { TRACKS, DEFAULT_SKILLS } from '../src/data/skills.js';
+import { PHOTOS } from '../src/data/photos.js';
+import { parseSearch } from '../src/lib/youtube.js';
 
 const trip = id => TRIPS.find(t => t.id === id);
 const prefs = (over = {}) => ({ get: [], do: [], region: 'any', surprise: false, tab: 'all', ...over });
@@ -41,10 +43,23 @@ test('picked ways and activities rank first', () => {
   for (let i = 1; i < results.length; i++) assert.ok(results[i - 1].score >= results[i].score);
 });
 
-test('region filter keeps nationwide trips and drops other regions', () => {
-  const { results } = recommend(TRIPS, prefs({ region: 'west' }), DEFAULT_SKILLS);
+test('region filter keeps anywhere trips and drops other regions', () => {
+  const { results } = recommend(TRIPS, prefs({ region: 'us-west' }), DEFAULT_SKILLS);
   assert.ok(results.length > 0);
-  for (const r of results) assert.ok(['west', 'any'].includes(r.trip.region), r.trip.id);
+  for (const r of results) assert.ok(['us-west', 'any'].includes(r.trip.region), r.trip.id);
+});
+
+test('"United States" covers every US region and nothing abroad', () => {
+  const ids = recommend(TRIPS, prefs({ region: 'us' }), DEFAULT_SKILLS).results.map(r => r.trip);
+  assert.ok(ids.some(t => t.region === 'us-alaska') && ids.some(t => t.region === 'us-west'));
+  assert.ok(ids.every(t => t.region === 'any' || t.region.startsWith('us-')));
+});
+
+test('anywhere in the world shows every trip, on several continents', () => {
+  const { results } = recommend(TRIPS, prefs(), DEFAULT_SKILLS);
+  assert.equal(results.length, TRIPS.length);
+  const regions = new Set(TRIPS.map(t => t.region.split('-')[0]));
+  for (const r of ['us', 'caribbean', 'latam', 'europe', 'africa', 'asia', 'oceania']) assert.ok(regions.has(r), `no trip in ${r}`);
 });
 
 test('readiness tab filters results and the counts add up', () => {
@@ -81,6 +96,33 @@ test('trip data is consistent', () => {
     (t.ways ?? []).forEach((w, i) => checkReq(w.req, `${t.id}.ways[${i}]`));
     (t.path ?? []).forEach((s, i) => checkReq(s.req, `${t.id}.path[${i}]`));
   }
+});
+
+test('every trip has a credited photo, at least one https source and YouTube terms', () => {
+  for (const t of TRIPS) {
+    const photo = PHOTOS[t.id];
+    assert.ok(t.image || photo, `${t.id}: needs a photo`);
+    if (photo) {
+      assert.match(photo.src, /^https:\/\/(upload|thumb)\.wikimedia\.org\/[^?]+$/, `${t.id}: photo src`);
+      assert.ok(photo.alt && photo.license && photo.page, `${t.id}: photo alt, license and page`);
+    }
+    assert.ok(t.sources?.length, `${t.id}: needs sources`);
+    for (const s of t.sources) assert.match(s.url, /^https:\/\//, `${t.id}: ${s.label}`);
+    assert.ok(t.youtube?.length, `${t.id}: needs youtube search terms`);
+  }
+  for (const id of Object.keys(PHOTOS)) assert.ok(TRIPS.some(t => t.id === id), `photo for unknown trip ${id}`);
+});
+
+test('YouTube search responses are parsed and cleaned', () => {
+  const videos = parseSearch({
+    items: [
+      { id: { videoId: 'abc123XYZ_-' }, snippet: { title: 'Fly &amp; camp: Idaho&#39;s best', channelTitle: 'Pilot &quot;Joe&quot;', publishedAt: '2025-06-01T10:00:00Z' } },
+      { id: { channelId: 'not-a-video' }, snippet: { title: 'A channel' } },
+      { id: { videoId: '<script>' }, snippet: { title: 'bad id' } },
+    ],
+  });
+  assert.deepEqual(videos, [{ id: 'abc123XYZ_-', title: "Fly & camp: Idaho's best", channel: 'Pilot "Joe"', published: '2025-06-01' }]);
+  assert.deepEqual(parseSearch(undefined), []);
 });
 
 test('every track has an unlock line for each level, and defaults are valid', () => {
