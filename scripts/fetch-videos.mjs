@@ -1,6 +1,6 @@
 // Fill src/data/videos.json with top YouTube results for each trip's `youtube` search terms.
 //
-//   YOUTUBE_API_KEY=... npm run videos
+//   npm run videos            (prompts for the key; see scripts/videos.sh)
 //
 // Uses the free YouTube Data API v3 (create a key in Google Cloud). Each search
 // costs 100 of the default 10,000 daily quota units; this makes one search per
@@ -8,7 +8,7 @@
 // your machine or reaches the site.
 import { writeFile } from 'node:fs/promises';
 import { TRIPS } from '../src/data/trips.js';
-import { parseSearch } from '../src/lib/youtube.js';
+import { parseSearch, keepVideos } from '../src/lib/youtube.js';
 
 const PER_TERM = 3;
 const key = process.env.YOUTUBE_API_KEY;
@@ -38,7 +38,7 @@ for (const trip of TRIPS) {
   const seen = new Set();
   videos[trip.id] = [];
   for (const term of trip.youtube ?? []) {
-    for (const video of await search(term)) {
+    for (const video of keepVideos(trip, await search(term))) {
       if (seen.has(video.id)) continue;
       seen.add(video.id);
       videos[trip.id].push(video);

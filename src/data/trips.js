@@ -9,6 +9,7 @@
 //   that always need an instructor, guide or skipper.
 // sources: where the facts come from. Check them before you go; rules change.
 // youtube: search terms for the "Watch on YouTube" links (and `npm run videos`).
+// youtubeSkip: video ids to leave out of the recommended videos (off-topic results).
 // image: optional photo of your own under /public (e.g. '/photos/catalina.jpg');
 //   otherwise the Wikimedia Commons photo in photos.js is used.
 
@@ -409,6 +410,7 @@ export const TRIPS = [
     headsUp: 'Ask the track about paddock camping and noise rules, and check your insurance before you book.',
     sources: [{ label: 'Track Night in America, SCCA', url: 'https://www.scca.com/pages/track-night-in-america' }],
     youtube: ['first HPDE track day', 'track day paddock camping'],
+    youtubeSkip: ['0MoGJxCYYQY', 'j-_nTt1UfQ4'], // pro paddock tour, oval fan camping
   },
   {
     id: 'bahamas',
@@ -503,6 +505,7 @@ export const TRIPS = [
     headsUp: 'The islands are a protected area. Go with a permitted operator and follow its rules on camping and wildlife.',
     sources: [{ label: 'Islands and Protected Areas of the Gulf of California, UNESCO', url: 'https://whc.unesco.org/en/list/1182' }],
     youtube: ['Espiritu Santo kayak camping', 'Los Islotes sea lions snorkel'],
+    youtubeSkip: ['PyRelRCZhxc'], // Espiritu Santo Bay, Texas
   },
   {
     id: 'dahab',
@@ -626,6 +629,7 @@ export const TRIPS = [
       { label: 'How to drive the Nürburgring Nordschleife, Porsche', url: 'https://www.porsche.com/stories/experience/how-to-drive-the-nuerburgring-nordschleife/' },
     ],
     youtube: ['Nordschleife tourist drive first lap', 'Nurburgring camping'],
+    youtubeSkip: ['Ev9KjfyRwhg', '_mnDjDnVbD4'], // 24-hour race spectating
   },
   {
     id: 'torres',

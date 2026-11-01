@@ -8,7 +8,7 @@ import SaveButton from '../../components/SaveButton.astro';
 import { TRIPS, LABEL } from '../../data/trips.js';
 import { PHOTOS } from '../../data/photos.js';
 import VIDEOS from '../../data/videos.json';
-import { searchUrl, watchUrl, thumbUrl } from '../../lib/youtube.js';
+import { searchUrl, watchUrl, thumbUrl, keepVideos } from '../../lib/youtube.js';
 
 export function getStaticPaths() {
   return TRIPS.map(trip => ({ params: { id: trip.id }, props: { trip } }));
@@ -16,7 +16,7 @@ export function getStaticPaths() {
 
 const { trip } = Astro.props as { trip: any };
 const photo = trip.image ? null : (PHOTOS as Record<string, any>)[trip.id];
-const recommended: { id: string; title: string; channel: string }[] = (VIDEOS as Record<string, any>)[trip.id] ?? [];
+const recommended: { id: string; title: string; channel: string }[] = keepVideos(trip, (VIDEOS as Record<string, any>)[trip.id]);
 const chain = `${trip.get.map((m: string) => LABEL[m].toUpperCase()).join(' · ')} → ${trip.do.map((a: string) => LABEL[a].toUpperCase()).join(' · ')}`;
 const glance = [['Get there', trip.get.map((m: string) => LABEL[m]).join(' · ')], ...(trip.glance ?? [])];
 const waysTitle = ['One way', 'Two ways', 'Three ways', 'Four ways', 'Five ways'][(trip.ways?.length ?? 1) - 1] ?? 'Ways';
@@ -130,7 +130,7 @@ const similar = TRIPS.filter(t => t.id !== trip.id)
     <div class="stack">
       <span class="eyebrow">Inspiration</span>
       <h2 class="display h2">Watch it on YouTube</h2>
-      <p class="muted" style="margin: 0">Fresh results straight from YouTube for this trip. Found one you love? Save it below; saved videos stay with this trip in this browser.</p>
+      <p class="muted" style="margin: 0">Top YouTube videos for this trip, plus live searches for more. Found one you love? Save it below; saved videos stay with this trip in this browser.</p>
     </div>
     <div class="chips">
       {(trip.youtube ?? [trip.title]).map((term: string) => (

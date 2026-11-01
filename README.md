@@ -54,10 +54,10 @@ Each trip has `youtube` search terms:
 - **Recommended videos on the page** (free, needs a key): create a YouTube Data API v3 key in Google Cloud, then run
 
   ```bash
-  YOUTUBE_API_KEY=your-key npm run videos
+  npm run videos
   ```
 
-  This writes the top results to `src/data/videos.json`. Commit that file and deploy; the key stays on your machine. A full refresh uses about 40 searches, roughly 4,000 of the free 10,000 daily quota units.
+  It asks for the key without echoing it, and writes the top results to `src/data/videos.json`. Commit that file and deploy; the key isn't saved anywhere. A full refresh uses about 40 searches, roughly 4,000 of the free 10,000 daily quota units. To drop an off-topic result for good, add its video id to the trip's `youtubeSkip` list.
 - **Your saved videos:** paste any link on a trip page to keep it with that trip.
 
 ## Make it yours

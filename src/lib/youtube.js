@@ -5,7 +5,16 @@ export const watchUrl = id => `https://www.youtube.com/watch?v=${encodeURICompon
 export const thumbUrl = id => `https://i.ytimg.com/vi/${encodeURIComponent(id)}/mqdefault.jpg`;
 
 const ENTITIES = { '&amp;': '&', '&quot;': '"', '&#39;': "'", '&lt;': '<', '&gt;': '>' };
-const decode = text => String(text ?? '').replace(/&(amp|quot|#39|lt|gt);/g, m => ENTITIES[m]);
+// Decode the few entities the API uses, and drop invisible characters some titles carry.
+const decode = text =>
+  String(text ?? '')
+    .replace(/&(amp|quot|#39|lt|gt);/g, m => ENTITIES[m])
+    .replace(/[￼​-‍﻿]/g, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+/** A trip's videos minus the ones listed in its `youtubeSkip`. */
+export const keepVideos = (trip, videos = []) => videos.filter(v => !(trip.youtubeSkip ?? []).includes(v.id));
 
 /** Pull { id, title, channel, published } out of a YouTube Data API v3 search response. */
 export function parseSearch(response) {

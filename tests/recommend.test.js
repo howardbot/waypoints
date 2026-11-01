@@ -4,7 +4,10 @@ import { readiness, stepStatus, recommend, levelIndex } from '../src/lib/recomme
 import { TRIPS, MODES, ACTIVITIES, REGIONS } from '../src/data/trips.js';
 import { TRACKS, DEFAULT_SKILLS } from '../src/data/skills.js';
 import { PHOTOS } from '../src/data/photos.js';
-import { parseSearch } from '../src/lib/youtube.js';
+import { parseSearch, keepVideos } from '../src/lib/youtube.js';
+import { readFileSync } from 'node:fs';
+
+const VIDEOS = JSON.parse(readFileSync(new URL('../src/data/videos.json', import.meta.url), 'utf8'));
 
 const trip = id => TRIPS.find(t => t.id === id);
 const prefs = (over = {}) => ({ get: [], do: [], region: 'any', surprise: false, tab: 'all', ...over });
@@ -116,13 +119,24 @@ test('every trip has a credited photo, at least one https source and YouTube ter
 test('YouTube search responses are parsed and cleaned', () => {
   const videos = parseSearch({
     items: [
-      { id: { videoId: 'abc123XYZ_-' }, snippet: { title: 'Fly &amp; camp: Idaho&#39;s best', channelTitle: 'Pilot &quot;Joe&quot;', publishedAt: '2025-06-01T10:00:00Z' } },
+      { id: { videoId: 'abc123XYZ_-' }, snippet: { title: 'Fly &amp; camp: Idaho&#39;s ￼best ', channelTitle: 'Pilot &quot;Joe&quot;', publishedAt: '2025-06-01T10:00:00Z' } },
       { id: { channelId: 'not-a-video' }, snippet: { title: 'A channel' } },
       { id: { videoId: '<script>' }, snippet: { title: 'bad id' } },
     ],
   });
   assert.deepEqual(videos, [{ id: 'abc123XYZ_-', title: "Fly & camp: Idaho's best", channel: 'Pilot "Joe"', published: '2025-06-01' }]);
   assert.deepEqual(parseSearch(undefined), []);
+});
+
+test('skipped videos stay out, and saved recommendations belong to real trips', () => {
+  assert.deepEqual(keepVideos({ youtubeSkip: ['b'] }, [{ id: 'a' }, { id: 'b' }]), [{ id: 'a' }]);
+  assert.deepEqual(keepVideos({}, undefined), []);
+  for (const [tripId, list] of Object.entries(VIDEOS)) {
+    const trip = TRIPS.find(t => t.id === tripId);
+    assert.ok(trip, `videos.json has unknown trip ${tripId}`);
+    for (const v of list) assert.match(v.id, /^[\w-]{6,}$/, `${tripId}: bad video id`);
+    for (const v of keepVideos(trip, list)) assert.doesNotMatch(v.title, /[￼​]/, `${tripId}: ${v.id} title`);
+  }
 });
 
 test('every track has an unlock line for each level, and defaults are valid', () => {
