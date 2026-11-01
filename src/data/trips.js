@@ -15,13 +15,16 @@
 
 import { AMERICAS } from './catalog/americas.js';
 import { WORLD } from './catalog/world.js';
+import { JOURNEYS } from './catalog/journeys.js';
 
-export const MODES = ['fly', 'sail', 'paddle', 'drive', 'ferry'];
-export const ACTIVITIES = ['camp', 'dive', 'snorkel', 'spearfish', 'hike', 'fish', 'track', 'shoot'];
+// boat: a boat you drive yourself or ride slowly (narrowboat, houseboat, river boat).
+export const MODES = ['fly', 'sail', 'paddle', 'drive', 'ferry', 'boat', 'train', 'bike', 'horse', 'sled'];
+export const ACTIVITIES = ['views', 'camp', 'dive', 'snorkel', 'spearfish', 'hike', 'fish', 'track', 'shoot'];
 
 export const LABEL = {
   fly: 'Fly', sail: 'Sail', paddle: 'Paddle', drive: 'Drive', ferry: 'Ferry',
-  camp: 'Camp', dive: 'Dive', snorkel: 'Snorkel', spearfish: 'Spearfish', hike: 'Hike', fish: 'Fish', track: 'Track day', shoot: 'Shoot',
+  boat: 'Boat', train: 'Train', bike: 'Bike', horse: 'Horse', sled: 'Dog sled',
+  views: 'Views', camp: 'Camp', dive: 'Dive', snorkel: 'Snorkel', spearfish: 'Spearfish', hike: 'Hike', fish: 'Fish', track: 'Track day', shoot: 'Shoot',
 };
 
 // 'us' matches every 'us-*' region; a trip with region 'any' shows everywhere.
@@ -32,6 +35,7 @@ export const REGIONS = [
   { id: 'us-mountain', label: 'US · Mountain West' },
   { id: 'us-central', label: 'US · Central & Midwest' },
   { id: 'us-southeast', label: 'US · Southeast & Florida' },
+  { id: 'us-northeast', label: 'US · Northeast & Mid-Atlantic' },
   { id: 'us-alaska', label: 'US · Alaska' },
   { id: 'us-hawaii', label: 'US · Hawaii' },
   { id: 'canada', label: 'Canada' },
@@ -121,7 +125,7 @@ const STARTER_TRIPS = [
     season: 'Summer',
     length: '3–5 days',
     get: ['fly'],
-    do: ['camp', 'hike', 'fish'],
+    do: ['views', 'camp', 'hike', 'fish'],
     photo: 'Tent beside a grass strip',
     tone: '#23362A',
     req: { skill: 'fly', readyAt: 'ppl', guideAt: 'ppl' },
@@ -191,7 +195,7 @@ const STARTER_TRIPS = [
     season: 'Summer',
     length: '3–5 days',
     get: ['sail', 'paddle'],
-    do: ['camp', 'hike'],
+    do: ['views', 'camp', 'hike'],
     photo: 'Boat on a mooring buoy',
     tone: '#163A44',
     req: { skill: 'sail', readyAt: 'bareboat', guideAt: 'none' },
@@ -462,7 +466,7 @@ const STARTER_TRIPS = [
     season: 'Year-round',
     length: 'A week',
     get: ['sail', 'ferry'],
-    do: ['camp', 'snorkel', 'hike'],
+    do: ['views', 'camp', 'snorkel', 'hike'],
     photo: 'Hill Inlet from the lookout',
     tone: '#1B4552',
     req: { skill: 'sail', readyAt: 'bareboat', guideAt: 'none' },
@@ -554,7 +558,7 @@ const STARTER_TRIPS = [
     season: 'Year-round; busiest Dec–Feb',
     length: '3–5 days',
     get: ['paddle', 'ferry'],
-    do: ['camp', 'hike'],
+    do: ['views', 'camp', 'hike'],
     photo: 'Kayak on a golden beach',
     tone: '#2B4038',
     isNew: true,
@@ -581,7 +585,7 @@ const STARTER_TRIPS = [
     season: 'Summer',
     length: 'A week',
     get: ['fly'],
-    do: ['camp', 'fish', 'hike'],
+    do: ['views', 'camp', 'fish', 'hike'],
     photo: 'Lake below the mountains',
     tone: '#22364A',
     isNew: true,
@@ -646,7 +650,7 @@ const STARTER_TRIPS = [
     season: 'Oct–Apr (southern summer)',
     length: 'A week',
     get: ['drive', 'ferry'],
-    do: ['hike', 'camp'],
+    do: ['views', 'hike', 'camp'],
     photo: 'Cuernos del Paine',
     tone: '#2C3A44',
     isNew: true,
@@ -740,7 +744,7 @@ const STARTER_TRIPS = [
     season: 'Dry season, roughly Dec–May',
     length: '3–5 days',
     get: ['sail', 'ferry'],
-    do: ['camp', 'snorkel'],
+    do: ['views', 'camp', 'snorkel'],
     photo: 'Limestone islands in Bacuit Bay',
     tone: '#1D4047',
     isNew: true,
@@ -763,4 +767,4 @@ const STARTER_TRIPS = [
   },
 ];
 
-export const TRIPS = [...STARTER_TRIPS, ...AMERICAS, ...WORLD];
+export const TRIPS = [...STARTER_TRIPS, ...AMERICAS, ...WORLD, ...JOURNEYS];

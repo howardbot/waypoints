@@ -14,8 +14,8 @@ const entries = (await getCollection('entries', e => !e.data.draft))
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
   .slice(0, 3);
 const builder = {
-  get: { legend: 'Get there by', options: ['fly', 'sail', 'paddle', 'drive'], on: 'fly' },
-  do: { legend: 'When you arrive', options: ['camp', 'dive', 'spearfish', 'hike'], on: 'camp' },
+  get: { legend: 'Get there by', options: ['fly', 'sail', 'boat', 'train', 'paddle', 'drive'], on: 'fly' },
+  do: { legend: 'When you arrive', options: ['camp', 'views', 'dive', 'spearfish', 'hike'], on: 'camp' },
 };
 const elements = [
   { name: 'Land', icon: 'hike', items: 'Hiking · Camping · Track days · Shooting' },
