@@ -1,5 +1,5 @@
 [Unit]
-Description=Waypoints: refresh YouTube videos and rebuild the site
+Description=Waypoints: refresh due YouTube videos and rebuild the site
 Wants=network-online.target
 After=network-online.target docker.service
 

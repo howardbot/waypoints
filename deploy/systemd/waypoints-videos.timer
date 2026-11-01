@@ -1,8 +1,8 @@
 [Unit]
-Description=Refresh Waypoints YouTube videos every week
+Description=Refresh due Waypoints YouTube videos every day (within the API quota)
 
 [Timer]
-OnCalendar=Mon *-*-* 04:00:00
+OnCalendar=*-*-* 04:00:00
 RandomizedDelaySec=30min
 Persistent=true
 

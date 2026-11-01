@@ -17,7 +17,7 @@ const { trip, match = false } = Astro.props;
 const href = `/trips/${trip.id}/`;
 ---
 <article class:list={['trip-card', match ? 'is-match' : 'is-linked']} data-trip-id={trip.id}>
-  <Photo label={trip.photo} tone={trip.tone} image={trip.image} photo={PHOTOS[trip.id as keyof typeof PHOTOS]} height={match ? 140 : 176} isNew={match && trip.isNew} />
+  <Photo label={trip.photo ?? trip.short} tone={trip.tone} image={trip.image} photo={PHOTOS[trip.id as keyof typeof PHOTOS]} height={match ? 140 : 176} isNew={match && trip.isNew} />
   <div class="trip-body">
     <span class="trip-chain">
       {trip.get.map((mode: string) => <span><Icon name={mode as any} size={14} strokeWidth={1.9} />{LABEL[mode].toUpperCase()}</span>)}

@@ -34,7 +34,17 @@ export function initDiscover() {
   const region = document.getElementById('region');
   const surprise = document.getElementById('surprise');
   const skillSelects = [...document.querySelectorAll('select[data-skill]')];
+  const more = document.getElementById('more');
+  const PAGE = 18;
   let prefs = readPrefs();
+  let limit = PAGE;
+
+  // Any filter change starts the list over at the best matches.
+  function update(changes) {
+    prefs = { ...prefs, ...changes };
+    limit = PAGE;
+    render();
+  }
 
   function render() {
     const skills = getSkills();
@@ -54,11 +64,12 @@ export function initDiscover() {
       select.value = skills[select.dataset.skill];
     });
 
-    const shown = new Set(results.map(r => r.trip.id));
+    const visible = results.slice(0, limit);
+    const shown = new Set(visible.map(r => r.trip.id));
     cards.forEach((card, id) => {
       card.hidden = !shown.has(id);
     });
-    for (const result of results) {
+    for (const result of visible) {
       const card = cards.get(result.trip.id);
       card.querySelector('.js-score').textContent = `${result.score}% match`;
       card.querySelector('.js-bar').style.width = `${result.score}%`;
@@ -67,6 +78,9 @@ export function initDiscover() {
     }
     empty.hidden = results.length > 0;
     summary.textContent = `${results.length} ${results.length === 1 ? 'combo' : 'combos'}, best match first`;
+    const remaining = results.length - visible.length;
+    more.hidden = remaining <= 0;
+    more.textContent = `Show ${Math.min(PAGE, remaining)} more · ${remaining} left`;
 
     const params = new URLSearchParams({ get: prefs.get.join(','), do: prefs.do.join(',') });
     if (prefs.region !== 'any') params.set('region', prefs.region);
@@ -78,28 +92,21 @@ export function initDiscover() {
     if (!chip) return;
     const { pref, value } = chip.dataset;
     const current = prefs[pref];
-    prefs = { ...prefs, [pref]: current.includes(value) ? current.filter(v => v !== value) : [...current, value] };
-    render();
+    update({ [pref]: current.includes(value) ? current.filter(v => v !== value) : [...current, value] });
   });
   document.querySelectorAll('.tab[data-tab]').forEach(tab => {
-    tab.addEventListener('click', () => {
-      prefs = { ...prefs, tab: tab.dataset.tab };
-      render();
-    });
+    tab.addEventListener('click', () => update({ tab: tab.dataset.tab }));
   });
-  region.addEventListener('change', () => {
-    prefs = { ...prefs, region: region.value };
-    render();
-  });
-  surprise.addEventListener('change', () => {
-    prefs = { ...prefs, surprise: surprise.checked };
-    render();
-  });
+  region.addEventListener('change', () => update({ region: region.value }));
+  surprise.addEventListener('change', () => update({ surprise: surprise.checked }));
   skillSelects.forEach(select => {
     select.addEventListener('change', () => setSkill(select.dataset.skill, select.value));
   });
   document.getElementById('reset')?.addEventListener('click', () => {
-    prefs = { get: [], do: [], region: 'any', surprise: true, tab: 'all' };
+    update({ get: [], do: [], region: 'any', surprise: true, tab: 'all' });
+  });
+  more.addEventListener('click', () => {
+    limit += PAGE;
     render();
   });
   window.addEventListener('waypoints:change', render);

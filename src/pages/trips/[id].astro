@@ -48,7 +48,7 @@ const similar = TRIPS.filter(t => t.id !== trip.id)
 
   <section class="wrap detail-hero">
     <figure class="detail-photo">
-      <Photo label={trip.photo} tone={trip.tone} image={trip.image} photo={photo} height={440} sizes="(min-width: 1240px) 860px, 100vw" eager />
+      <Photo label={trip.photo ?? trip.short} tone={trip.tone} image={trip.image} photo={photo} height={440} sizes="(min-width: 1240px) 860px, 100vw" eager />
       {photo && (
         <figcaption class="credit">
           Photo: <a href={photo.page} rel="noopener">{photo.author || 'Wikimedia Commons'}</a> ·{' '}

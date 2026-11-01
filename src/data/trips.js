@@ -13,12 +13,15 @@
 // image: optional photo of your own under /public (e.g. '/photos/catalina.jpg');
 //   otherwise the Wikimedia Commons photo in photos.js is used.
 
+import { AMERICAS } from './catalog/americas.js';
+import { WORLD } from './catalog/world.js';
+
 export const MODES = ['fly', 'sail', 'paddle', 'drive', 'ferry'];
-export const ACTIVITIES = ['camp', 'dive', 'snorkel', 'spearfish', 'hike', 'fish', 'track'];
+export const ACTIVITIES = ['camp', 'dive', 'snorkel', 'spearfish', 'hike', 'fish', 'track', 'shoot'];
 
 export const LABEL = {
   fly: 'Fly', sail: 'Sail', paddle: 'Paddle', drive: 'Drive', ferry: 'Ferry',
-  camp: 'Camp', dive: 'Dive', snorkel: 'Snorkel', spearfish: 'Spearfish', hike: 'Hike', fish: 'Fish', track: 'Track day',
+  camp: 'Camp', dive: 'Dive', snorkel: 'Snorkel', spearfish: 'Spearfish', hike: 'Hike', fish: 'Fish', track: 'Track day', shoot: 'Shoot',
 };
 
 // 'us' matches every 'us-*' region; a trip with region 'any' shows everywhere.
@@ -30,6 +33,8 @@ export const REGIONS = [
   { id: 'us-central', label: 'US · Central & Midwest' },
   { id: 'us-southeast', label: 'US · Southeast & Florida' },
   { id: 'us-alaska', label: 'US · Alaska' },
+  { id: 'us-hawaii', label: 'US · Hawaii' },
+  { id: 'canada', label: 'Canada' },
   { id: 'caribbean', label: 'Caribbean & Bahamas' },
   { id: 'latam', label: 'Mexico & Latin America' },
   { id: 'europe', label: 'Europe' },
@@ -38,7 +43,8 @@ export const REGIONS = [
   { id: 'oceania', label: 'Australia & New Zealand' },
 ];
 
-export const TRIPS = [
+// The first 21 trips live here; the rest are in ./catalog/ (same format).
+const STARTER_TRIPS = [
   {
     id: 'catalina',
     short: 'Catalina',
@@ -756,3 +762,5 @@ export const TRIPS = [
     youtube: ['Tao Philippines expedition', 'Coron to El Nido boat trip'],
   },
 ];
+
+export const TRIPS = [...STARTER_TRIPS, ...AMERICAS, ...WORLD];

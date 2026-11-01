@@ -41,7 +41,7 @@ Your skill levels, saved trips and saved video links stay in the browser (`local
 
 ## Trips, photos and sources
 
-The catalog covers 21 trips worldwide: the US (including Alaska), the Caribbean, Mexico and Latin America, Europe, Africa and the Middle East, Asia, and Australia and New Zealand. The Discover page filters by region; "United States (all)" covers every US region.
+The catalog covers 57 trips worldwide: the US (including Alaska and Hawaii), Canada, the Caribbean, Mexico and Latin America, Europe, Africa and the Middle East, Asia, and Australia and New Zealand. The Discover page filters by region ("United States (all)" covers every US region) and shows 18 results at a time. The first 21 trips are in `src/data/trips.js`; the rest are in `src/data/catalog/`, in the same format.
 
 - **Sources:** every trip lists the pages its facts come from (park services, airports, regulators), shown at the bottom of the trip page. Rules, prices and seasons change, so check them before a trip.
 - **Photos:** every trip has a freely licensed photo from Wikimedia Commons ([`src/data/photos.js`](src/data/photos.js)), credited on the trip page and on `/credits/`. To use your own, drop it in `public/photos/` and add `image: '/photos/name.jpg'` to the trip.
@@ -51,7 +51,7 @@ The catalog covers 21 trips worldwide: the US (including Alaska), the Caribbean,
 Each trip has `youtube` search terms:
 
 - **Watch on YouTube links** (free, no setup): open YouTube's live search for each term, so results are always current.
-- **Recommended videos on the page** (free, needs a YouTube Data API v3 key from Google Cloud): the server refreshes them every week by itself (see Deploy). A refresh uses about 40 searches, roughly 4,000 of the free 10,000 daily quota units. To drop an off-topic result for good, add its video id to the trip's `youtubeSkip` list. To refresh by hand on any machine, run `npm run videos`; it asks for the key with hidden input and writes `src/data/videos.json`.
+- **Recommended videos on the page** (free, needs a YouTube Data API v3 key from Google Cloud): the server refreshes them every day by itself (see Deploy), within a budget of 80 searches (8,000 of the free 10,000 daily quota units). New trips go first, then any trip whose videos are more than a week old, so it scales to any number of trips; if the quota runs out mid-run, it keeps what it fetched and picks up the rest the next day. To drop an off-topic result for good, add its video id to the trip's `youtubeSkip` list. To refresh by hand on any machine, run `npm run videos`; it asks for the key with hidden input and writes `src/data/videos.json`.
 - **Your saved videos:** paste any link on a trip page to keep it with that trip.
 
 ## Make it yours
@@ -75,7 +75,7 @@ npm run build    # static site in dist/
 The server builds and serves the site by itself, straight from this GitHub repo. No laptop is involved:
 
 - **Every hour** it checks GitHub and rebuilds if there are new commits, so a push (even from the GitHub website) goes live within the hour.
-- **Every week** (Monday early morning, server time) it refreshes the YouTube videos and rebuilds.
+- **Every day** (early morning, server time) it refreshes the YouTube videos that are due and rebuilds.
 - Builds run in a throwaway `node:20-alpine` container, so the server needs no Node install. If a refresh or build fails, the last good site stays up.
 - The site is an `nginx:alpine` container bound to `127.0.0.1`, published by `tailscale serve` over HTTPS to your tailnet only (default port 8446). No public ports are opened, and other `tailscale serve` routes on the machine are left alone.
 
