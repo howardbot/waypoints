@@ -1,0 +1,90 @@
+#!/usr/bin/env bash
+# Runs on the server from systemd (see deploy/install.sh) and builds the site
+# straight from GitHub, so nothing depends on a laptop.
+#
+#   refresh.sh            rebuild only if GitHub has new commits   (hourly timer)
+#   refresh.sh --videos   refresh YouTube videos, then rebuild     (weekly timer)
+#   refresh.sh --force    rebuild even if nothing changed
+set -euo pipefail
+
+BASE="${WAYPOINTS_DIR:-$HOME/waypoints}"
+REPO="$BASE/repo"
+PORT="${WAYPOINTS_PORT:-8096}"
+NODE_IMAGE="node:20-alpine"
+KEY_FILE="$BASE/youtube.env"   # YOUTUBE_API_KEY=..., written by set-youtube-key.sh
+VIDEOS="$BASE/videos.json"     # last good YouTube results, kept outside the repo
+BUILT="$BASE/.built-commit"
+
+videos=false
+force=false
+for arg in "$@"; do
+  case "$arg" in
+    --videos) videos=true ;;
+    --force) force=true ;;
+    *) echo "unknown option: $arg" >&2; exit 2 ;;
+  esac
+done
+
+log() { printf '[%s] %s\n' "$(date '+%F %T')" "$*"; }
+
+exec 9>"$BASE/.refresh.lock"
+flock -w 900 9 || { log "Another refresh is still running; skipping"; exit 0; }
+
+git -C "$REPO" fetch -q origin main
+head="$(git -C "$REPO" rev-parse origin/main)"
+if ! $videos && ! $force && [[ -f "$BUILT" && "$(cat "$BUILT")" == "$head" ]]; then
+  exit 0 # nothing new on GitHub
+fi
+git -C "$REPO" reset -q --hard "$head"
+git -C "$REPO" clean -qfdx -e node_modules
+log "Building $(git -C "$REPO" log -1 --format='%h %s')"
+
+# Node runs in a throwaway container as this user, so the host needs no Node install.
+mkdir -p "$BASE/.npm"
+node_run() {
+  sudo docker run --rm --user "$(id -u):$(id -g)" -e HOME=/tmp -e npm_config_cache=/npm \
+    -v "$REPO:/app" -v "$BASE/.npm:/npm" -w /app "$@"
+}
+node_run "$NODE_IMAGE" npm ci --no-audit --no-fund --loglevel=error
+
+if $videos; then
+  if [[ -f "$KEY_FILE" ]]; then
+    if node_run --env-file "$KEY_FILE" "$NODE_IMAGE" node scripts/fetch-videos.mjs; then
+      cp "$REPO/src/data/videos.json" "$VIDEOS"
+      log "YouTube videos refreshed"
+    else
+      log "YouTube refresh failed; keeping the last good videos"
+    fi
+  else
+    log "No $KEY_FILE yet; skipping the YouTube refresh"
+  fi
+fi
+
+# Use the server's videos when they're newer than the ones committed to GitHub.
+if [[ -f "$VIDEOS" ]]; then
+  committed="$(git -C "$REPO" log -1 --format=%ct -- src/data/videos.json)"
+  if (( $(stat -c %Y "$VIDEOS") > ${committed:-0} )); then
+    cp "$VIDEOS" "$REPO/src/data/videos.json"
+  fi
+fi
+
+node_run "$NODE_IMAGE" npm test --silent
+node_run "$NODE_IMAGE" npm run build --silent
+
+# Swap the new build in, then recreate the container so its bind mount follows.
+cp "$REPO/deploy/docker-compose.yml" "$REPO/deploy/nginx.conf" "$BASE/"
+rm -rf "$BASE/site.new" "$BASE/site.old"
+cp -a "$REPO/dist" "$BASE/site.new"
+cd "$BASE"
+if [[ -d site ]]; then mv site site.old; fi
+mv site.new site
+sudo WAYPOINTS_PORT="$PORT" docker compose -p waypoints up -d --force-recreate --remove-orphans
+rm -rf site.old
+
+for _ in $(seq 1 20); do
+  if curl -fs -o /dev/null "http://127.0.0.1:$PORT/"; then break; fi
+  sleep 0.5
+done
+curl -fs -o /dev/null "http://127.0.0.1:$PORT/" || { log "Site did not come back up on port $PORT"; exit 1; }
+echo "$head" > "$BUILT"
+log "Live: $(git -C "$REPO" log -1 --format='%h %s')"

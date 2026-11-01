@@ -51,13 +51,7 @@ The catalog covers 21 trips worldwide: the US (including Alaska), the Caribbean,
 Each trip has `youtube` search terms:
 
 - **Watch on YouTube links** (free, no setup): open YouTube's live search for each term, so results are always current.
-- **Recommended videos on the page** (free, needs a key): create a YouTube Data API v3 key in Google Cloud, then run
-
-  ```bash
-  npm run videos
-  ```
-
-  It asks for the key without echoing it, and writes the top results to `src/data/videos.json`. Commit that file and deploy; the key isn't saved anywhere. A full refresh uses about 40 searches, roughly 4,000 of the free 10,000 daily quota units. To drop an off-topic result for good, add its video id to the trip's `youtubeSkip` list.
+- **Recommended videos on the page** (free, needs a YouTube Data API v3 key from Google Cloud): the server refreshes them every week by itself (see Deploy). A refresh uses about 40 searches, roughly 4,000 of the free 10,000 daily quota units. To drop an off-topic result for good, add its video id to the trip's `youtubeSkip` list. To refresh by hand on any machine, run `npm run videos`; it asks for the key with hidden input and writes `src/data/videos.json`.
 - **Your saved videos:** paste any link on a trip page to keep it with that trip.
 
 ## Make it yours
@@ -78,17 +72,31 @@ npm run build    # static site in dist/
 
 ## Deploy: private to your tailnet
 
-The site is plain static files. `npm run deploy` builds it and runs it on your server, where only devices on your Tailscale network can reach it:
+The server builds and serves the site by itself, straight from this GitHub repo. No laptop is involved:
 
-- an `nginx:alpine` container bound to `127.0.0.1` ([`deploy/`](deploy/))
-- `tailscale serve` publishes it over HTTPS to your tailnet only (default port 8446)
-- no public ports are opened, and other `tailscale serve` routes on the machine are left alone
+- **Every hour** it checks GitHub and rebuilds if there are new commits, so a push (even from the GitHub website) goes live within the hour.
+- **Every week** (Monday early morning, server time) it refreshes the YouTube videos and rebuilds.
+- Builds run in a throwaway `node:20-alpine` container, so the server needs no Node install. If a refresh or build fails, the last good site stays up.
+- The site is an `nginx:alpine` container bound to `127.0.0.1`, published by `tailscale serve` over HTTPS to your tailnet only (default port 8446). No public ports are opened, and other `tailscale serve` routes on the machine are left alone.
 
-Before the first deploy:
+One-time server setup (needs Docker with Compose, Tailscale logged in, and passwordless `sudo`):
 
-1. The server needs Docker with the Compose plugin, Tailscale logged in, and passwordless `sudo` for `docker` and `tailscale`.
-2. `cp .env.deploy.example .env.deploy` and fill in the SSH target and key. The file is git-ignored.
-3. Run `npm run deploy`. It prints the tailnet URL when it's done.
+```bash
+git clone https://github.com/howardbot/waypoints.git ~/waypoints/repo
+sudo bash ~/waypoints/repo/deploy/install.sh        # timers + Tailscale Serve
+bash ~/waypoints/repo/deploy/set-youtube-key.sh     # stores the key, readable by you only
+sudo systemctl start waypoints-videos.service       # first build with fresh videos
+```
+
+Handy commands on the server:
+
+```bash
+systemctl list-timers 'waypoints-*'                  # when the next runs are
+journalctl -u waypoints-update -u waypoints-videos   # what happened
+sudo systemctl start waypoints-update.service        # rebuild now
+```
+
+From your laptop, `npm run deploy` does the same "rebuild now" over SSH after checking you've pushed (set it up with `cp .env.deploy.example .env.deploy`).
 
 ## Credits
 
