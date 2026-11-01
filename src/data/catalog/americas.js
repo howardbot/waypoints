@@ -84,6 +84,7 @@ export const AMERICAS = [
       { label: 'Camping in the Apostle Islands, NPS', url: 'https://www.nps.gov/apis/planyourvisit/camping.htm' },
     ],
     youtube: ['Apostle Islands sea caves kayak', 'Apostle Islands island camping'],
+    youtubeSkip: ['yWXAU-r6iMI'], // mainland RV park review
   },
   {
     id: 'isleroyale',
@@ -114,6 +115,7 @@ export const AMERICAS = [
       { label: 'Getting to Isle Royale, NPS', url: 'https://www.nps.gov/isro/planyourvisit/directions.htm' },
     ],
     youtube: ['Isle Royale seaplane', 'Isle Royale backpacking'],
+    youtubeSkip: ['e9DGnDkOPmI'], // local news segment
   },
   {
     id: 'everglades',
@@ -265,6 +267,7 @@ export const AMERICAS = [
     headsUp: 'Read the match rules and the firearm transport laws for every state you drive through. Eye and ear protection are required on the line.',
     sources: [{ label: 'CMP National Matches', url: 'https://thecmp.org/cmp-national-matches/' }],
     youtube: ['Camp Perry National Matches', 'CMP Camp Perry first time'],
+    youtubeSkip: ['4mrJ_D3blx4'], // store promo
   },
   {
     id: 'kalalau',
@@ -288,6 +291,7 @@ export const AMERICAS = [
     headsUp: 'Camping permits are required and limited, and streams on the trail can flood fast after rain. Do not cross a rising stream.',
     sources: [{ label: 'Nā Pali Coast State Wilderness Park, Hawaii DLNR', url: 'https://dlnr.hawaii.gov/dsp/parks/kauai/napali-coast-state-wilderness-park/' }],
     youtube: ['Kalalau Trail backpacking', 'Na Pali coast kayak'],
+    youtubeSkip: ['duCD73v-2Mo'], // company outing
   },
   {
     id: 'algonquin',
@@ -436,6 +440,7 @@ export const AMERICAS = [
     headsUp: 'Camping is by reservation only, in designated sites at Cinnamon Bay.',
     sources: [{ label: 'Camping in Virgin Islands National Park, NPS', url: 'https://www.nps.gov/viis/planyourvisit/camping.htm' }],
     youtube: ['Cinnamon Bay campground St John', 'St John snorkeling'],
+    youtubeSkip: ['N7u3xfT5WOA'], // swimwear promo
   },
   {
     id: 'galapagos',
