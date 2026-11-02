@@ -16,16 +16,21 @@
 import { AMERICAS } from './catalog/americas.js';
 import { WORLD } from './catalog/world.js';
 import { JOURNEYS } from './catalog/journeys.js';
+import { RESEARCHED } from './catalog/researched.js';
 
 // boat: a boat you drive yourself or ride slowly (narrowboat, houseboat, river boat).
+// sled: snow travel (dog sled, snowmobile, skis). make: workshop and maker trips.
 export const MODES = ['fly', 'sail', 'paddle', 'drive', 'ferry', 'boat', 'train', 'bike', 'horse', 'sled'];
-export const ACTIVITIES = ['views', 'camp', 'dive', 'snorkel', 'spearfish', 'hike', 'fish', 'track', 'shoot'];
+export const ACTIVITIES = ['views', 'camp', 'dive', 'snorkel', 'spearfish', 'hike', 'fish', 'track', 'shoot', 'make'];
 
 export const LABEL = {
   fly: 'Fly', sail: 'Sail', paddle: 'Paddle', drive: 'Drive', ferry: 'Ferry',
-  boat: 'Boat', train: 'Train', bike: 'Bike', horse: 'Horse', sled: 'Dog sled',
-  views: 'Views', camp: 'Camp', dive: 'Dive', snorkel: 'Snorkel', spearfish: 'Spearfish', hike: 'Hike', fish: 'Fish', track: 'Track day', shoot: 'Shoot',
+  boat: 'Boat', train: 'Train', bike: 'Bike', horse: 'Horse', sled: 'Snow',
+  views: 'Views', camp: 'Camp', dive: 'Dive', snorkel: 'Snorkel', spearfish: 'Spearfish', hike: 'Hike', fish: 'Fish', track: 'Track day', shoot: 'Shoot', make: 'Workshop',
 };
+
+// Which research model suggested a trip (see catalog/researched.js).
+export const VIA = { chatgpt: 'ChatGPT', gemini: 'Gemini', both: 'ChatGPT and Gemini' };
 
 // 'us' matches every 'us-*' region; a trip with region 'any' shows everywhere.
 export const REGIONS = [
@@ -767,4 +772,4 @@ const STARTER_TRIPS = [
   },
 ];
 
-export const TRIPS = [...STARTER_TRIPS, ...AMERICAS, ...WORLD, ...JOURNEYS];
+export const TRIPS = [...STARTER_TRIPS, ...AMERICAS, ...WORLD, ...JOURNEYS, ...RESEARCHED];

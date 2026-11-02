@@ -5,7 +5,7 @@ import Photo from '../../components/Photo.astro';
 import Badge from '../../components/Badge.astro';
 import Note from '../../components/Note.astro';
 import SaveButton from '../../components/SaveButton.astro';
-import { TRIPS, LABEL } from '../../data/trips.js';
+import { TRIPS, LABEL, VIA } from '../../data/trips.js';
 import { PHOTOS } from '../../data/photos.js';
 import VIDEOS from '../../data/videos.json';
 import { searchUrl, watchUrl, thumbUrl, keepVideos } from '../../lib/youtube.js';
@@ -164,7 +164,10 @@ const similar = TRIPS.filter(t => t.id !== trip.id)
   {trip.sources?.length > 0 && (
     <section class="wrap" style="padding-block: 48px 0">
       <h2 class="display h3" style="margin-bottom: 12px">Sources</h2>
-      <p class="muted small" style="margin: 0 0 16px">Where these details come from. Rules, prices and seasons change, so check them before you go.</p>
+      <p class="muted small" style="margin: 0 0 16px">
+        {trip.via && `Suggested by ${VIA[trip.via as keyof typeof VIA]} research; each claim was checked against these sources. `}
+        Rules, prices and seasons change, so check them before you go.
+      </p>
       <ul class="sources">
         {trip.sources.map((s: { label: string; url: string }) => (
           <li><a class="lnk" href={s.url} target="_blank" rel="noopener noreferrer">{s.label}</a><span class="mono small muted">{new URL(s.url).hostname.replace(/^www\./, '')}</span></li>

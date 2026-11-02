@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readiness, stepStatus, recommend, levelIndex } from '../src/lib/recommend.js';
-import { TRIPS, MODES, ACTIVITIES, REGIONS } from '../src/data/trips.js';
+import { TRIPS, MODES, ACTIVITIES, REGIONS, VIA } from '../src/data/trips.js';
 import { TRACKS, DEFAULT_SKILLS } from '../src/data/skills.js';
 import { PHOTOS } from '../src/data/photos.js';
 import { parseSearch, keepVideos } from '../src/lib/youtube.js';
@@ -114,6 +114,13 @@ test('every trip has a credited photo, at least one https source and YouTube ter
     assert.ok(t.youtube?.length, `${t.id}: needs youtube search terms`);
   }
   for (const id of Object.keys(PHOTOS)) assert.ok(TRIPS.some(t => t.id === id), `photo for unknown trip ${id}`);
+});
+
+test('no trip text is left unverified, and research credits are valid', () => {
+  for (const t of TRIPS) {
+    assert.doesNotMatch(JSON.stringify(t), /\bVERIFY\b/, `${t.id}: unverified text`);
+    if (t.via) assert.ok(VIA[t.via], `${t.id}: unknown via ${t.via}`);
+  }
 });
 
 test('YouTube search responses are parsed and cleaned', () => {
