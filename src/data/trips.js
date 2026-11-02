@@ -157,7 +157,10 @@ const STARTER_TRIPS = [
       { label: 'Fly in with your instructor', req: { skill: 'fly', readyAt: 'student' }, guided: true },
       { label: 'Fly yourself in and camp under the wing', req: { skill: 'fly', readyAt: 'ppl' } },
     ],
-    sources: [{ label: 'EAA AirVenture Oshkosh', url: 'https://www.eaa.org/airventure' }],
+    sources: [
+      { label: 'EAA AirVenture Oshkosh', url: 'https://www.eaa.org/airventure' },
+      { label: 'AirVenture dates through 2029, EAA', url: 'https://www.eaa.org/eaa/about-eaa/eaa-media-room/airventure-news-releases/airventure-dates-through-2029' },
+    ],
     youtube: ['Oshkosh AirVenture camping under the wing'],
   },
   {

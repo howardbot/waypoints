@@ -4,7 +4,7 @@ import { TRIPS, REGIONS } from '../src/data/trips.js';
 import { COORDS } from '../src/data/coords.js';
 import { EVENTS } from '../src/data/events.js';
 import { parseSeason, tripMonths, monthsText, monthRange } from '../src/lib/season.js';
-import { eventStatus, formatRange, datesLine } from '../src/lib/events.js';
+import { upcoming, editionText, datesIn, ruleFor, formatRange, estimatedEvents } from '../src/lib/events.js';
 import { recommend, matchesQuery } from '../src/lib/recommend.js';
 import { compactTrips } from '../src/lib/compact.js';
 import { photoFile, localize } from '../src/lib/local-photo.js';
@@ -57,22 +57,36 @@ test('trip coordinates are real and sit in the right part of the world', () => {
   for (const id of Object.keys(COORDS)) assert.ok(trip(id), `coordinates for unknown trip ${id}`);
 });
 
-test('event dates are valid and belong to real trips', () => {
+test('event dates are valid, and each yearly rule matches its confirmed dates', () => {
   const iso = /^\d{4}-\d{2}-\d{2}$/;
   for (const [id, list] of Object.entries(EVENTS)) {
     assert.ok(trip(id), `events for unknown trip ${id}`);
     for (const e of list) {
-      assert.ok(e.name && iso.test(e.start) && iso.test(e.end) && e.start <= e.end, `${id}: bad event ${JSON.stringify(e)}`);
+      assert.ok(e.name && e.dates.length, `${id}: an event needs a name and dates`);
+      for (const [start, end] of e.dates) {
+        assert.ok(iso.test(start) && iso.test(end) && start <= end, `${id}: bad dates ${start} ${end}`);
+        if (e.repeats) assert.deepEqual(datesIn(e.repeats, Number(start.slice(0, 4))), [start, end], `${id}: rule misses ${start}`);
+      }
     }
   }
   assert.equal(formatRange('2026-09-21', '2026-09-27'), 'Sep 21–27, 2026');
   assert.equal(formatRange('2026-12-21', '2027-03-10'), 'Dec 21, 2026 – Mar 10, 2027');
+});
+
+test('trips with events list confirmed dates, then estimates, years ahead', () => {
   const nov = new Date('2026-11-02T12:00:00Z');
-  assert.equal(eventStatus('teardown', nov).next, null);
-  assert.equal(eventStatus('teardown', nov).last.start, '2026-07-24');
-  assert.match(datesLine('teardown', nov), /^Last held Jul 24–26, 2026/);
-  assert.equal(eventStatus('tripletree', nov).next.start, '2027-09-20');
-  assert.match(datesLine('supercon', nov), /Nov 6–8, 2026/);
+  const [fly] = upcoming('tripletree', nov);
+  assert.deepEqual(fly.editions.map(editionText), ['Sep 20–26, 2027', 'About Sep 18–24, 2028', 'About Sep 24–30, 2029']);
+  assert.equal(upcoming('supercon', nov)[0].editions[0].start, '2026-11-06');
+  assert.ok(upcoming('lobstermini', nov)[0].editions.every(e => !e.estimated), 'set by state rule, so not estimates');
+  assert.equal(upcoming('cccamp', nov)[0].editions.length, 2, 'every four years, no more than five years out');
+  // Without a rule, estimates keep the weekday and week of the month: FOSDEM's last Saturday of January.
+  assert.deepEqual(datesIn(ruleFor({ dates: [['2027-01-30', '2027-01-31']] }), 2028), ['2028-01-29', '2028-01-30']);
+  // However much time passes, every event still shows an upcoming date.
+  for (const id of Object.keys(EVENTS)) {
+    for (const e of upcoming(id, new Date('2040-06-01T00:00:00Z'))) assert.ok(e.editions.length, `${id}: ${e.name} has no date in 2040`);
+  }
+  assert.ok(estimatedEvents(nov).some(e => e.id === 'teardown'));
 });
 
 test('trip text keeps year-specific dates in events.js, not in seasons', () => {

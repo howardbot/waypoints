@@ -11,7 +11,7 @@ import { COORDS } from '../../data/coords.js';
 import VIDEOS from '../../data/videos.json';
 import { searchUrl, watchUrl, thumbUrl, keepVideos } from '../../lib/youtube.js';
 import { tripMonths, monthsText } from '../../lib/season.js';
-import { datesLine } from '../../lib/events.js';
+import { upcoming, editionText } from '../../lib/events.js';
 
 export function getStaticPaths() {
   return TRIPS.map(trip => ({ params: { id: trip.id }, props: { trip } }));
@@ -22,11 +22,10 @@ const photo = trip.image ? null : (PHOTOS as Record<string, any>)[trip.id];
 const recommended: { id: string; title: string; channel: string }[] = keepVideos(trip, (VIDEOS as Record<string, any>)[trip.id]);
 const chain = `${trip.get.map((m: string) => LABEL[m].toUpperCase()).join(' · ')} → ${trip.do.map((a: string) => LABEL[a].toUpperCase()).join(' · ')}`;
 const coords = (COORDS as Record<string, [number, number]>)[trip.id];
-const dates = datesLine(trip.id);
+const events = upcoming(trip.id);
 const glance = [
   ['Get there', trip.get.map((m: string) => LABEL[m]).join(' · ')],
   ['Best months', monthsText(tripMonths(trip, coords?.[0]))],
-  ...(dates ? [['Dates', dates]] : []),
   ...(trip.glance ?? []),
 ];
 const waysTitle = ['One way', 'Two ways', 'Three ways', 'Four ways', 'Five ways'][(trip.ways?.length ?? 1) - 1] ?? 'Ways';
@@ -93,6 +92,22 @@ const similar = TRIPS.filter(t => t.id !== trip.id)
       <dl>
         {glance.map(([label, value]) => (
           <div><dt>{label}</dt><dd>{value}</dd></div>
+        ))}
+        {events.map(e => (
+          <div class="glance-dates">
+            <dt>{e.name}</dt>
+            <dd>
+              <ul>
+                {e.editions.map(ed => <li class:list={{ est: ed.estimated }}>{editionText(ed)}</li>)}
+              </ul>
+              {(e.usually || e.editions.some(ed => ed.estimated)) && (
+                <span class="usual">
+                  {e.usually && `Usually ${e.usually}.`}
+                  {e.editions.some(ed => ed.estimated) && ' "About" dates are estimates until announced.'}
+                </span>
+              )}
+            </dd>
+          </div>
         ))}
       </dl>
       {trip.headsUp && (

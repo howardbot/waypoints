@@ -22,7 +22,7 @@ Trips are ranked for the skills you have today, so each one shows as:
 | `/trips/<id>/` | One trip: best months, next event dates, ways to get there, your path, pack list, "I've done this", saved videos |
 | `/logbook/` | Skill tracks (tap the step you're on), trips you've done, totals by activity, wishlist |
 | `/entries/` | Trip reports, builds and skill logs written in Markdown |
-| `/status/` | Site health: broken source links, events that need new dates, video and photo coverage |
+| `/status/` | Site health: broken source links, events still on estimated dates, video and photo coverage |
 
 ## How the recommender works
 
@@ -52,7 +52,7 @@ The catalog covers 260 trips worldwide: the US (including Alaska and Hawaii), Ca
 - **Sources:** every trip lists the pages its facts come from (park services, airports, regulators), shown at the bottom of the trip page. Rules, prices and seasons change, so check them before a trip.
 - **Photos:** every trip has a freely licensed photo from Wikimedia Commons ([`src/data/photos.js`](src/data/photos.js)), credited on the trip page and on `/credits/`. The server downloads each photo once and serves it itself ([`scripts/fetch-photos.mjs`](scripts/fetch-photos.mjs)); until a photo is downloaded, pages load it from Wikimedia. To use your own, drop it in `public/photos/` and add `image: '/photos/name.jpg'` to the trip.
 - **Seasons:** each trip's `season` text is read into months ([`src/lib/season.js`](src/lib/season.js)) for the month filter, "In season now" and the map. Text it can't read gets an entry in [`src/data/months.js`](src/data/months.js). Season words follow the hemisphere, using the trip's coordinates ([`src/data/coords.js`](src/data/coords.js), geocoded with OpenStreetMap).
-- **Event dates:** trips that happen on specific days list them in [`src/data/events.js`](src/data/events.js). The trip page shows the next date, or "last held" once they've passed, and `/status/` lists the events that need next year's dates. Keep year-specific dates out of the trip text; a test checks.
+- **Event dates:** trips that happen on specific days list them in [`src/data/events.js`](src/data/events.js): dates confirmed by the organizer, plus how the event usually falls (say, "the Friday after Labor Day"). Trip pages show the next three editions up to five years out, marking the ones estimated from that pattern, and `/status/` lists the events whose next date is still an estimate. Add announced dates as they come out; a test checks that each pattern matches the confirmed dates. Keep year-specific dates out of the trip text; a test checks that too.
 
 ## YouTube
 

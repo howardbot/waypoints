@@ -1,20 +1,21 @@
 ---
 // Site health, rebuilt every day on the server: source links that broke (monthly check),
-// event dates that have passed, and how many trips have videos and local photos.
+// events still on estimated dates, and how many trips have videos and local photos.
 import Base from '../layouts/Base.astro';
 import { TRIPS } from '../data/trips.js';
 import { PHOTOS } from '../data/photos.js';
 import { EVENTS } from '../data/events.js';
 import VIDEOS from '../data/videos.json';
 import LINKS from '../data/link-status.json';
-import { staleEvents, formatRange } from '../lib/events.js';
+import { estimatedEvents, editionText } from '../lib/events.js';
 import { localize } from '../lib/local-photo.js';
 
 const title = (id: string) => TRIPS.find(t => t.id === id)?.title ?? id;
 const links = LINKS as { checkedAt?: string; total?: number; counts?: Record<string, number>; problems?: any[] };
 const needsLook = (links.problems ?? []).filter(p => p.status !== 'blocked');
 const blocked = (links.problems ?? []).filter(p => p.status === 'blocked');
-const stale = staleEvents();
+const estimated = estimatedEvents();
+const eventCount = Object.values(EVENTS).flat().length;
 const withVideos = TRIPS.filter(t => ((VIDEOS as Record<string, any[]>)[t.id] ?? []).length > 0).length;
 const photos = Object.values(PHOTOS);
 const localPhotos = photos.filter(p => localize(p).src.startsWith('/')).length;
@@ -34,7 +35,7 @@ const day = (iso?: string) => (iso ? iso.slice(0, 10) : 'not yet');
       <div class="status-tile"><strong>{withVideos}</strong>with YouTube videos</div>
       <div class="status-tile"><strong>{localPhotos}/{photos.length}</strong>photos served from this site</div>
       <div class="status-tile"><strong>{links.total ? links.counts?.ok : '—'}</strong>source links OK{links.total ? ` of ${links.total}` : ''}</div>
-      <div class="status-tile"><strong>{stale.length}</strong>events needing new dates</div>
+      <div class="status-tile"><strong>{eventCount - estimated.length}/{eventCount}</strong>events with confirmed next dates</div>
     </div>
 
     <h2 class="display h3" style="margin-bottom: 12px">Source links</h2>
@@ -55,18 +56,19 @@ const day = (iso?: string) => (iso ? iso.slice(0, 10) : 'not yet');
     {blocked.length > 0 && <p class="muted small" style="margin-bottom: 40px">{blocked.length} links blocked automated checks.</p>}
 
     <h2 class="display h3" style="margin: 24px 0 12px">Event dates</h2>
-    {stale.length ? (
+    <p class="muted small">These events haven't announced their next dates, so trip pages show an estimate from the usual pattern. Add the real dates to events.js once they're out.</p>
+    {estimated.length ? (
       <div class="rows">
-        {stale.map(e => (
+        {estimated.map(e => (
           <a class="row" href={`/trips/${e.id}/`}>
-            <span class="row-main">{title(e.id)}</span>
-            <span class="row-meta">Last: {e.last && formatRange(e.last.start, e.last.end)}</span>
-            <span class="row-state">ADD NEXT DATES</span>
+            <span class="row-main">{e.name}</span>
+            <span class="row-meta">{editionText(e.next)}</span>
+            <span class="row-state">ESTIMATE</span>
           </a>
         ))}
       </div>
     ) : (
-      <p class="empty-row">Every dated event has an upcoming date.</p>
+      <p class="empty-row">Every event's next date is confirmed.</p>
     )}
     <p class="small muted" style="margin-top: 32px">{Object.keys(EVENTS).length} trips have dated events · built {builtAt} UTC</p>
   </section>

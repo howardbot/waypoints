@@ -1,26 +1,104 @@
-// Dated events for trips that happen on specific days. The trip page shows the next date,
-// or "last held" once every date has passed, and /status/ lists trips that need new dates.
-// Only dates confirmed on the trip's sources go here; add next year's once they're announced.
+// Dated events for trips that happen on specific days, so trips can be planned years ahead.
+//
+//   dates    [start, end] pairs confirmed on the organizer's own pages (cited in the trip's sources)
+//   repeats  how the event usually falls, used to estimate the years nobody has announced yet:
+//              { month, weekday, nth, offset, days }  the nth weekday of the month (-1 = last),
+//                                                      moved `offset` days, lasting `days` days
+//              { month, day, days }                    the same calendar dates every year
+//            Without it, estimates keep the weekday and week of the month of the latest date.
+//   official true when `repeats` is the organizer's own published rule, so its dates aren't estimates
+//   usually  the pattern in words, shown after "Usually" on the trip page
+//   every    years between editions (default 1)
+//
+// Trip pages show the next few editions and mark estimates; add dates as organizers announce them.
 export const EVENTS = {
-  teardown: [{ name: 'Teardown', start: '2026-07-24', end: '2026-07-26' }],
+  oshkosh: [
+    {
+      name: 'EAA AirVenture',
+      usually: 'a week in late July',
+      dates: [['2026-07-20', '2026-07-26'], ['2027-07-26', '2027-08-01'], ['2028-07-24', '2028-07-30'], ['2029-07-23', '2029-07-29']],
+    },
+  ],
+  sunnfun: [
+    {
+      name: "SUN 'n FUN",
+      usually: 'Tuesday to Sunday in early April',
+      dates: [['2027-04-06', '2027-04-11'], ['2028-04-04', '2028-04-09'], ['2029-04-10', '2029-04-15'], ['2030-04-09', '2030-04-14']],
+    },
+  ],
+  teardown: [{ name: 'Teardown', usually: 'a Friday to Sunday in early summer', dates: [['2026-07-24', '2026-07-26']] }],
   tripletree: [
-    { name: 'Triple Tree Fly-In', start: '2026-09-21', end: '2026-09-27' },
-    { name: 'Triple Tree Fly-In', start: '2027-09-20', end: '2027-09-26' },
+    {
+      name: 'Triple Tree Fly-In',
+      usually: 'Monday to Sunday of the last full week of September',
+      repeats: { month: 9, weekday: 'Sun', nth: -1, offset: -6, days: 7 },
+      dates: [['2026-09-21', '2026-09-27'], ['2027-09-20', '2027-09-26']],
+    },
+  ],
+  moosehead: [
+    {
+      name: 'International Seaplane Fly-In',
+      usually: 'Thursday to Sunday after Labor Day',
+      repeats: { month: 9, weekday: 'Mon', nth: 1, offset: 3, days: 4 },
+      dates: [['2027-09-09', '2027-09-12']],
+    },
   ],
   porttownsend: [
-    { name: 'Timber framing course', start: '2026-06-22', end: '2026-06-27' },
-    { name: 'Wooden Boat Festival', start: '2026-09-11', end: '2026-09-13' },
+    { name: 'Timber framing course', usually: 'a week in late June', dates: [['2026-06-22', '2026-06-27']] },
+    {
+      name: 'Wooden Boat Festival',
+      usually: 'Friday to Sunday after Labor Day',
+      repeats: { month: 9, weekday: 'Mon', nth: 1, offset: 4, days: 3 },
+      dates: [['2026-09-11', '2026-09-13']],
+    },
   ],
   ladakh: [
-    { name: 'Ladakh Bike Week', start: '2026-09-01', end: '2026-09-07' },
-    { name: 'Ladakh Bike Week', start: '2027-09-01', end: '2027-09-07' },
+    {
+      name: 'Ladakh Bike Week',
+      usually: 'September 1–7',
+      repeats: { month: 9, day: 1, days: 7 },
+      dates: [['2026-09-01', '2026-09-07'], ['2027-09-01', '2027-09-07'], ['2028-09-01', '2028-09-07']],
+    },
   ],
-  supercon: [{ name: 'Hackaday Supercon', start: '2026-11-06', end: '2026-11-08' }],
-  easternexpress: [{ name: '2026–27 season', start: '2026-12-21', end: '2027-03-10' }],
-  embeddedworld: [{ name: 'embedded world', start: '2027-03-16', end: '2027-03-18' }],
+  supercon: [{ name: 'Hackaday Supercon', usually: 'a weekend in early November', dates: [['2026-11-06', '2026-11-08']] }],
+  makerfaire: [{ name: 'Maker Faire Rome', usually: 'a Friday to Sunday in October', dates: [['2026-10-23', '2026-10-25']] }],
+  arc: [
+    {
+      name: 'ARC, start to prize-giving',
+      usually: 'starts on the fourth Sunday of November',
+      repeats: { month: 11, weekday: 'Sun', nth: 4, days: 28 },
+      dates: [['2026-11-22', '2026-12-19']],
+    },
+  ],
+  easternexpress: [
+    {
+      name: 'Touristic Eastern Express season',
+      usually: 'late December to early March',
+      repeats: { month: 12, day: 21, days: 80 },
+      dates: [['2026-12-21', '2027-03-10']],
+    },
+  ],
+  fosdem: [{ name: 'FOSDEM', usually: 'a weekend around the start of February', dates: [['2027-01-30', '2027-01-31']] }],
+  embeddedworld: [{ name: 'embedded world', usually: 'Tuesday to Thursday in March', dates: [['2027-03-16', '2027-03-18']] }],
   lyngen: [
-    { name: 'SeilNorge departure', start: '2027-04-06', end: '2027-04-12' },
-    { name: 'SeilNorge departure', start: '2027-05-03', end: '2027-05-09' },
+    { name: 'SeilNorge April departure', usually: 'early April', dates: [['2027-04-06', '2027-04-12']] },
+    { name: 'SeilNorge May departure', usually: 'early May', dates: [['2027-05-03', '2027-05-09']] },
   ],
-  lobstermini: [{ name: 'Lobster mini-season', start: '2027-07-28', end: '2027-07-29' }],
+  lobstermini: [
+    {
+      name: 'Lobster mini-season',
+      usually: 'the last consecutive Wednesday and Thursday of July, set by state rule',
+      repeats: { month: 7, weekday: 'Thu', nth: -1, offset: -1, days: 2 },
+      official: true,
+      dates: [['2027-07-28', '2027-07-29']],
+    },
+  ],
+  cccamp: [
+    {
+      name: 'Chaos Communication Camp',
+      usually: 'five days in August, every four years',
+      every: 4,
+      dates: [['2023-08-15', '2023-08-19']],
+    },
+  ],
 };

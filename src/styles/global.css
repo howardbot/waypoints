@@ -239,6 +239,9 @@ a.row:hover .row-main { color: var(--accent); }
 .glance dl { display: flex; flex-direction: column; gap: 14px; margin: 0; }
 .glance dt { font-size: 13px; color: var(--ink-2); }
 .glance dd { margin: 0; font-weight: 600; }
+.glance-dates ul { display: flex; flex-direction: column; gap: 4px; margin: 0; padding: 0; list-style: none; }
+.glance-dates li.est { font-weight: 400; color: var(--ink-2); }
+.glance-dates .usual { display: block; margin-top: 6px; font-size: 13px; font-weight: 400; color: var(--ink-2); }
 .headsup { display: flex; gap: 10px; padding: 14px; border-radius: 12px; background: var(--accent-soft); color: var(--accent-ink); font-size: 14px; }
 .headsup svg { flex-shrink: 0; margin-top: 2px; color: #9a3412; }
 .way { display: flex; flex-direction: column; gap: 14px; padding: 26px; }
