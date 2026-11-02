@@ -17,20 +17,23 @@ import { AMERICAS } from './catalog/americas.js';
 import { WORLD } from './catalog/world.js';
 import { JOURNEYS } from './catalog/journeys.js';
 import { RESEARCHED } from './catalog/researched.js';
+import { SHORE } from './catalog/shore.js';
 
 // fly: you fly the plane yourself (or with your instructor). air: someone else flies a small
 // aircraft that is part of the adventure (bush plane, floatplane, air taxi, helicopter, glider
 // ride, balloon). An airline flight just to reach a place doesn't count as a way there.
 // boat: a boat you drive yourself or ride slowly (narrowboat, houseboat, river boat).
 // horse: riding animals (horses, camels). sled: snow travel (dog sled, snowmobile, skis).
-// make: workshop and maker trips.
+// make: workshop and maker trips. forage: "chasing the sea" (赶海) and its cousins: gathering
+// clams, cockles and other shellfish at low tide, and catching crabs and lobsters by hand,
+// net, trap or pot. No rod fishing (that's fish).
 export const MODES = ['fly', 'air', 'sail', 'paddle', 'drive', 'ferry', 'boat', 'train', 'bike', 'horse', 'sled'];
-export const ACTIVITIES = ['views', 'camp', 'dive', 'snorkel', 'spearfish', 'hike', 'fish', 'track', 'shoot', 'make'];
+export const ACTIVITIES = ['views', 'camp', 'dive', 'snorkel', 'spearfish', 'forage', 'hike', 'fish', 'track', 'shoot', 'make'];
 
 export const LABEL = {
   fly: 'Fly myself', air: 'Small aircraft', sail: 'Sail', paddle: 'Paddle', drive: 'Drive', ferry: 'Ferry',
   boat: 'Boat', train: 'Train', bike: 'Bike', horse: 'Horse & camel', sled: 'Snow',
-  views: 'Views', camp: 'Camp', dive: 'Dive', snorkel: 'Snorkel', spearfish: 'Spearfish', hike: 'Hike', fish: 'Fish', track: 'Track day', shoot: 'Shoot', make: 'Workshop',
+  views: 'Views', camp: 'Camp', dive: 'Dive', snorkel: 'Snorkel', spearfish: 'Spearfish', forage: 'Clams & crabs', hike: 'Hike', fish: 'Fish', track: 'Track day', shoot: 'Shoot', make: 'Workshop',
 };
 
 // Which research model suggested a trip (see catalog/researched.js).
@@ -776,4 +779,4 @@ const STARTER_TRIPS = [
   },
 ];
 
-export const TRIPS = [...STARTER_TRIPS, ...AMERICAS, ...WORLD, ...JOURNEYS, ...RESEARCHED];
+export const TRIPS = [...STARTER_TRIPS, ...AMERICAS, ...WORLD, ...JOURNEYS, ...RESEARCHED, ...SHORE];
