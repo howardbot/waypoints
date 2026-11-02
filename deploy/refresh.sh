@@ -107,7 +107,9 @@ cp -a "$REPO/dist" "$BASE/site.new"
 cd "$BASE"
 if [[ -d site ]]; then mv site site.old; fi
 mv site.new site
-sudo WAYPOINTS_PORT="$PORT" docker compose -p waypoints up -d --force-recreate --remove-orphans
+mkdir -p "$BASE/sync" # synced state, one file per person (see deploy/sync/server.mjs)
+sudo WAYPOINTS_PORT="$PORT" WAYPOINTS_UID="$(id -u)" WAYPOINTS_GID="$(id -g)" WAYPOINTS_SITE_URL="$site_url" \
+  docker compose -p waypoints up -d --force-recreate --remove-orphans
 rm -rf site.old
 
 for _ in $(seq 1 20); do

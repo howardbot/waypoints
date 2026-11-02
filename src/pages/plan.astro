@@ -8,15 +8,15 @@ import Icon from '../components/Icon.astro';
   <section class="wrap page-intro">
     <span class="eyebrow">Plan</span>
     <h1 class="display h1">The next five years</h1>
-    <p class="lead">Put trips in the months you'll go. Event dates fill themselves in, and you'll see when two trips share a month or a trip misses its season. Your plan is saved in this browser.</p>
+    <p class="lead">Put trips in the months you'll go. Event dates fill themselves in, and you'll see when two trips share a month or a trip misses its season. Your plan syncs to all your devices.</p>
     <div class="actions">
       <button type="button" class="btn btn-primary js-suggest"><Icon name="sparkle" size={16} strokeWidth={2} />Suggest months for saved trips</button>
       <button type="button" class="btn btn-outline js-download"><Icon name="download" size={16} strokeWidth={2} />Download plan (.ics)</button>
-      <a class="btn btn-outline js-subscribe" href="/calendar.ics"><Icon name="calendar" size={16} strokeWidth={2} />Subscribe to event dates</a>
+      <a class="btn btn-outline js-subscribe" href="/calendar.ics"><Icon name="calendar" size={16} strokeWidth={2} />Subscribe in your calendar</a>
     </div>
     <p class="small muted plan-help">
-      The subscription has every dated event, confirmed or estimated, and updates daily; your phone needs Tailscale on to refresh it.
-      The download is your plan as it is now, so download it again after you change it.
+      The subscription has every dated event, confirmed or estimated, plus your plan, and keeps itself up to date; your phone needs Tailscale on to refresh it.
+      The download is a one-off copy of your plan for a calendar app that can't subscribe.
       <span class="js-suggest-note"></span>
     </p>
   </section>

@@ -1,9 +1,11 @@
 // Runs on every page: re-renders readiness badges, notes, skill tracks and
-// save buttons from what this browser has stored. Pages are built with the
-// default skills, so this brings them up to date with yours.
+// save buttons from what this browser has stored, and keeps it synced with your
+// other devices. Pages are built with the default skills, so this brings them up
+// to date with yours.
 import { TRACKS } from '../data/skills.js';
 import { getSkills, getSaved, toggleSaved, getDone } from './store.js';
 import { readiness, stepStatus, STATE_LABEL } from './recommend.js';
+import { startSync } from './sync.js';
 
 const parse = json => {
   try {
@@ -81,6 +83,22 @@ export function syncAll() {
   syncDone();
 }
 
+const SYNC_TEXT = {
+  starting: () => 'Syncing…',
+  ok: s => `Synced with your devices at ${new Date(s.at).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' })}`,
+  offline: () => "Saved here; syncs when your server's reachable",
+  off: () => 'Saved in this browser only',
+};
+
+function showSync(event) {
+  const text = SYNC_TEXT[event.detail.state](event.detail);
+  document.querySelectorAll('[data-sync-status]').forEach(el => {
+    el.textContent = text;
+    el.dataset.state = event.detail.state;
+    if (event.detail.user) el.title = `Synced as ${event.detail.user}`;
+  });
+}
+
 export function initShared() {
   document.addEventListener('click', event => {
     const button = event.target instanceof Element ? event.target.closest('[data-save]') : null;
@@ -88,5 +106,7 @@ export function initShared() {
   });
   window.addEventListener('waypoints:change', syncAll);
   window.addEventListener('storage', syncAll);
+  window.addEventListener('waypoints:sync', showSync);
   syncAll();
+  startSync();
 }

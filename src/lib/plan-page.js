@@ -6,6 +6,7 @@ import { MONTH_NAMES, monthsText } from './season.js';
 import { editionText } from './events.js';
 import { calendar } from './ics.js';
 import { PLAN_YEARS, thisMonth, monthLabel, suggestMonth, suggestPlan, planNotes, planEvents } from './plan.js';
+import { syncStatus } from './sync.js';
 
 const SHORT = MONTH_NAMES.map(m => m.slice(0, 3));
 const key = ({ year, month }) => year * 12 + month;
@@ -148,7 +149,13 @@ export async function initPlanner() {
   const suggestNote = document.querySelector('.js-suggest-note');
   const downloadButton = document.querySelector('.js-download');
   if (!yearsBox || !unplannedBox || !eventsBox) return;
-  document.querySelector('.js-subscribe').href = `webcal://${location.host}/calendar.ics`;
+  // With the sync server, subscribe to your own feed (events plus your plan); without it, events only.
+  const subscribe = document.querySelector('.js-subscribe');
+  const feedLink = () => {
+    subscribe.href = `webcal://${location.host}/${syncStatus().state === 'off' ? 'calendar.ics' : 'api/calendar.ics'}`;
+  };
+  window.addEventListener('waypoints:sync', feedLink);
+  feedLink();
 
   let trips;
   try {

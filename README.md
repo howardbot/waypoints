@@ -20,7 +20,8 @@ Trips are ranked for the skills you have today, so each one shows as:
 | `/discover/` | The recommender: search, then filter by way there, activities, region, month and skills |
 | `/map/` | Every trip on a world map, colored by how ready you are (Leaflet + OpenStreetMap) |
 | `/plan/` | Your next five years: saved trips by month, clash and season warnings, suggested months, every dated event, calendar download |
-| `/calendar.ics` | Calendar feed of every dated event, confirmed or estimated, to subscribe to |
+| `/calendar.ics` | Calendar feed of every dated event, confirmed or estimated |
+| `/api/calendar.ics` | The same feed with your plan in it (from the sync server); the planner's Subscribe button uses this one |
 | `/trips/<id>/` | One trip: best months, next event dates, "Plan it", ways to get there, your path, pack list, "I've done this", saved videos |
 | `/logbook/` | Skill tracks (tap the step you're on), trips you've done, totals by activity, wishlist |
 | `/entries/` | Trip reports, builds and skill logs written in Markdown |
@@ -43,7 +44,7 @@ Scores add up from four parts ([`src/lib/recommend.js`](src/lib/recommend.js)):
 - 20 / 14 / 6 for ready now / with a guide / goal trip
 - +12 for new-to-you trips when "Mix in things I've never tried" is on
 
-Your skill levels, saved trips, your plan, trips you've done and saved video links stay in the browser (`localStorage`). There are no accounts and no backend.
+Your skill levels, saved trips, your plan, trips you've done and saved video links live in the browser (`localStorage`) and sync between your devices through a small server next to the site ([`deploy/sync/server.mjs`](deploy/sync/server.mjs)). There are no accounts: Tailscale Serve tells the server who you are (`Tailscale-User-Login`), so each person on the tailnet gets their own state. Every item remembers when it last changed and merges keep the newest, so edits on two devices don't overwrite each other, and a device that was offline catches up the next time it opens the site. Each browser keeps its own full copy, so the site works without the server (a local preview, or offline) and the server can't lose your data for good.
 
 Discover, the home page, the logbook and the map load one slim file, `/trips.json` ([`src/lib/compact.js`](src/lib/compact.js)), and build the cards in the browser, so no page downloads the whole catalog.
 
@@ -68,7 +69,7 @@ Each trip has `youtube` search terms:
 
 - **Add a trip:** copy an object in `src/data/trips.js`. Run `npm test` and it checks ids, skills, levels, photos and sources.
 - **Log a trip:** open it and tap "I've done this"; it shows up in the logbook with the date and your note.
-- **Plan ahead:** tap "Plan it" on a trip, or "Suggest months for saved trips" on `/plan/`, which puts dated events in their event month and other trips in a free month of their season. Two events only clash when their dates overlap. "Download plan (.ics)" saves the plan for your calendar app; "Subscribe to event dates" adds the `/calendar.ics` feed, which updates daily (your phone needs Tailscale on to refresh it).
+- **Plan ahead:** tap "Plan it" on a trip, or "Suggest months for saved trips" on `/plan/`, which puts dated events in their event month and other trips in a free month of their season. Two events only clash when their dates overlap. "Subscribe in your calendar" adds your own feed: every dated event, with the ones you planned marked "Planned:" and a reminder for other planned trips (your phone needs Tailscale on to refresh it). "Download plan (.ics)" is a one-off copy for calendar apps that can't subscribe.
 - **Your numbers:** replace the `null` values in `src/data/logbook.js`.
 - **Skill tracks and unlock text:** `src/data/skills.js`.
 - **Write an entry:** copy `src/content/entries/example-entry.md`, then set `draft: false`.
@@ -93,6 +94,7 @@ The server builds and serves the site by itself, straight from this GitHub repo.
 - `install.sh` writes the site's tailnet address to `~/waypoints/site-url`, outside the repo; builds read it so the calendar feed can link back to trips.
 - Builds run in a throwaway `node:20-alpine` container, so the server needs no Node install. If a refresh or build fails, the last good site stays up.
 - The site is an `nginx:alpine` container (with gzip) bound to `127.0.0.1`, published by `tailscale serve` over HTTPS to your tailnet only (default port 8446). No public ports are opened, and other `tailscale serve` routes on the machine are left alone.
+- The sync server is a `node:20-alpine` container with no ports of its own; nginx sends `/api/` to it. It runs the code in the repo checkout and keeps one JSON file per person in `~/waypoints/sync/`.
 
 One-time server setup (needs Docker with Compose, Tailscale logged in, and passwordless `sudo`):
 

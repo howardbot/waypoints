@@ -1,5 +1,6 @@
-# Static site in a small nginx container, bound to localhost only.
-# Tailscale Serve publishes it to your tailnet (see scripts/deploy.sh).
+# Static site in a small nginx container, bound to localhost only, plus the sync server that
+# nginx sends /api/ to (no ports of its own). Tailscale Serve publishes the site to your
+# tailnet (see deploy/install.sh).
 services:
   web:
     image: nginx:1.27-alpine
@@ -10,3 +11,17 @@ services:
     volumes:
       - ./site:/usr/share/nginx/html:ro
       - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+
+  sync:
+    image: node:20-alpine
+    container_name: waypoints-sync
+    restart: unless-stopped
+    user: "${WAYPOINTS_UID:-1000}:${WAYPOINTS_GID:-1000}"
+    working_dir: /repo
+    command: ["node", "deploy/sync/server.mjs"]
+    environment:
+      DATA_DIR: /data
+      SITE_URL: ${WAYPOINTS_SITE_URL:-}
+    volumes:
+      - ./repo:/repo:ro
+      - ./sync:/data
