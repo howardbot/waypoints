@@ -23,7 +23,7 @@ Trips are ranked for the skills you have today, so each one shows as:
 | `/calendar.ics` | Calendar feed of every dated event, confirmed or estimated |
 | `/api/calendar.ics` | The same feed with your plan in it (from the sync server); the planner's Subscribe button uses this one |
 | `/trips/<id>/` | One trip: best months, next event dates, "Plan it", ways to get there, your path, pack list, "I've done this", saved videos |
-| `/logbook/` | Skill tracks (tap the step you're on), trips you've done, totals by activity, wishlist |
+| `/logbook/` | Skill tracks (tap the step you're on) with the trips each next level unlocks, trips you've done, totals by activity, wishlist |
 | `/entries/` | Trip reports, builds and skill logs written in Markdown |
 | `/status/` | Site health: broken source links, events still on estimated dates, video and photo coverage |
 

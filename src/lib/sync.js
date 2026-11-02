@@ -34,6 +34,7 @@ async function exchange() {
 }
 
 export async function syncNow() {
+  if (status.state === 'off') return; // no sync server on this site (a local preview): stop asking
   if (running) {
     again = true;
     return running;

@@ -162,6 +162,18 @@ button.step:hover .step-bar { background: #c9d0c7; }
 .step[data-pos='now'] .step-bar { background: var(--accent); }
 .track-next { margin: 0; padding: 14px 16px; border-radius: 12px; background: var(--paper); font-size: 15px; }
 .track-next .tag { font-family: var(--mono); font-size: 12px; letter-spacing: 0.1em; color: var(--accent); }
+.track-unlocks { display: flex; flex-direction: column; gap: 4px; font-size: 15px; }
+.unlock { border-top: 1px solid var(--rule-soft); }
+.unlock:first-child { border-top: 0; }
+.unlock summary { padding: 11px 0; cursor: pointer; }
+.unlock summary strong { margin-right: 4px; }
+.unlock summary::marker { color: var(--accent); }
+.unlock-group { display: flex; flex-direction: column; gap: 6px; margin: 0 0 12px; }
+.unlock-label { font-family: var(--mono); font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-2); }
+.unlock-list { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; list-style: none; }
+.unlock-list a { display: inline-flex; align-items: center; min-height: 32px; padding: 0 12px; border: 1px solid var(--chip-bd); border-radius: 999px; font-size: 14px; }
+.unlock-list a:hover { border-color: var(--ink); color: var(--accent); }
+.unlock-none { margin: 0; padding: 10px 0; color: var(--ink-2); font-size: 14px; }
 .night .track { background: var(--night-2); border-color: var(--night-rule); }
 .night .track-ic { background: var(--night); }
 .night .track-level, .night .step { color: var(--night-muted); }

@@ -6,6 +6,7 @@ import { TRACKS } from '../data/skills.js';
 import { getSkills, getSaved, toggleSaved, getDone } from './store.js';
 import { readiness, stepStatus, STATE_LABEL } from './recommend.js';
 import { startSync } from './sync.js';
+import { initUnlocks } from './unlocks.js';
 
 const parse = json => {
   try {
@@ -109,4 +110,5 @@ export function initShared() {
   window.addEventListener('waypoints:sync', showSync);
   syncAll();
   startSync();
+  initUnlocks();
 }

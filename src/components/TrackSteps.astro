@@ -15,7 +15,7 @@ const idx = track.levels.findIndex((l: any) => l.id === level);
 const Heading = `h${headingLevel}`;
 const pos = (i: number) => (i < idx ? 'done' : i === idx ? 'now' : 'todo');
 ---
-<article class="track" data-track={track.key}>
+<article class="track" id={`track-${track.key}`} data-track={track.key}>
   <div class="track-head">
     <Heading class="track-name"><span class="track-ic"><Icon name={track.icon} size={22} /></span>{track.name}</Heading>
     <span class="track-level" data-track-level>{track.levels[idx]?.label}</span>
@@ -36,4 +36,5 @@ const pos = (i: number) => (i < idx ? 'done' : i === idx ? 'now' : 'todo');
     ))}
   </ol>
   <p class="track-next"><span class="tag">NEXT · </span><span data-track-unlock>{track.unlock[level]}</span></p>
+  <div class="track-unlocks" data-track-unlocks={track.key} data-unlock-view={interactive ? 'full' : 'short'} aria-live="polite" hidden></div>
 </article>
