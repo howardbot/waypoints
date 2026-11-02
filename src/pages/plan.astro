@@ -1,0 +1,56 @@
+---
+// The multi-year planner: trips by year and month, saved trips not planned yet, and every dated
+// event in the next five years. Rendered in the browser from /trips.json and your saved plan.
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+---
+<Base title="Plan" description="Spread your saved trips over the next five years, with event dates and calendar export.">
+  <section class="wrap page-intro">
+    <span class="eyebrow">Plan</span>
+    <h1 class="display h1">The next five years</h1>
+    <p class="lead">Put trips in the months you'll go. Event dates fill themselves in, and you'll see when two trips share a month or a trip misses its season. Your plan is saved in this browser.</p>
+    <div class="actions">
+      <button type="button" class="btn btn-primary js-suggest"><Icon name="sparkle" size={16} strokeWidth={2} />Suggest months for saved trips</button>
+      <button type="button" class="btn btn-outline js-download"><Icon name="download" size={16} strokeWidth={2} />Download plan (.ics)</button>
+      <a class="btn btn-outline js-subscribe" href="/calendar.ics"><Icon name="calendar" size={16} strokeWidth={2} />Subscribe to event dates</a>
+    </div>
+    <p class="small muted plan-help">
+      The subscription has every dated event, confirmed or estimated, and updates daily; your phone needs Tailscale on to refresh it.
+      The download is your plan as it is now, so download it again after you change it.
+      <span class="js-suggest-note"></span>
+    </p>
+  </section>
+
+  <section class="wrap" style="padding-bottom: 32px" aria-label="Your plan">
+    <div class="plan-years js-years" aria-busy="true"></div>
+    <noscript><p class="empty-row">The planner needs JavaScript.</p></noscript>
+  </section>
+
+  <section class="wrap section" id="unplanned">
+    <div class="section-head">
+      <div class="stack">
+        <span class="eyebrow">Wishlist</span>
+        <h2 class="display h2">Saved, not planned yet</h2>
+      </div>
+      <a class="lnk" href="/discover/">Find more <span aria-hidden="true">→</span></a>
+    </div>
+    <div class="rows js-unplanned" hidden></div>
+    <p class="empty-row js-unplanned-empty">Every saved trip has a month. Save more in Discover.</p>
+  </section>
+
+  <section class="wrap section" id="events" style="padding-top: 0">
+    <div class="section-head">
+      <div class="stack">
+        <span class="eyebrow">Calendar</span>
+        <h2 class="display h2">Dated events</h2>
+      </div>
+    </div>
+    <div class="tabs js-event-years" role="group" aria-label="Year"></div>
+    <div class="rows js-events" style="margin-top: 20px"></div>
+  </section>
+
+  <script>
+    import { initPlanner } from '../lib/plan-page.js';
+    initPlanner();
+  </script>
+</Base>

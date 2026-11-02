@@ -19,7 +19,9 @@ Trips are ranked for the skills you have today, so each one shows as:
 | `/` | Home: combo builder, trips in season this month, recommended trips, skills in progress, logbook totals |
 | `/discover/` | The recommender: search, then filter by way there, activities, region, month and skills |
 | `/map/` | Every trip on a world map, colored by how ready you are (Leaflet + OpenStreetMap) |
-| `/trips/<id>/` | One trip: best months, next event dates, ways to get there, your path, pack list, "I've done this", saved videos |
+| `/plan/` | Your next five years: saved trips by month, clash and season warnings, suggested months, every dated event, calendar download |
+| `/calendar.ics` | Calendar feed of every dated event, confirmed or estimated, to subscribe to |
+| `/trips/<id>/` | One trip: best months, next event dates, "Plan it", ways to get there, your path, pack list, "I've done this", saved videos |
 | `/logbook/` | Skill tracks (tap the step you're on), trips you've done, totals by activity, wishlist |
 | `/entries/` | Trip reports, builds and skill logs written in Markdown |
 | `/status/` | Site health: broken source links, events still on estimated dates, video and photo coverage |
@@ -41,7 +43,7 @@ Scores add up from four parts ([`src/lib/recommend.js`](src/lib/recommend.js)):
 - 20 / 14 / 6 for ready now / with a guide / goal trip
 - +12 for new-to-you trips when "Mix in things I've never tried" is on
 
-Your skill levels, saved trips, trips you've done and saved video links stay in the browser (`localStorage`). There are no accounts and no backend.
+Your skill levels, saved trips, your plan, trips you've done and saved video links stay in the browser (`localStorage`). There are no accounts and no backend.
 
 Discover, the home page, the logbook and the map load one slim file, `/trips.json` ([`src/lib/compact.js`](src/lib/compact.js)), and build the cards in the browser, so no page downloads the whole catalog.
 
@@ -66,6 +68,7 @@ Each trip has `youtube` search terms:
 
 - **Add a trip:** copy an object in `src/data/trips.js`. Run `npm test` and it checks ids, skills, levels, photos and sources.
 - **Log a trip:** open it and tap "I've done this"; it shows up in the logbook with the date and your note.
+- **Plan ahead:** tap "Plan it" on a trip, or "Suggest months for saved trips" on `/plan/`, which puts dated events in their event month and other trips in a free month of their season. Two events only clash when their dates overlap. "Download plan (.ics)" saves the plan for your calendar app; "Subscribe to event dates" adds the `/calendar.ics` feed, which updates daily (your phone needs Tailscale on to refresh it).
 - **Your numbers:** replace the `null` values in `src/data/logbook.js`.
 - **Skill tracks and unlock text:** `src/data/skills.js`.
 - **Write an entry:** copy `src/content/entries/example-entry.md`, then set `draft: false`.
@@ -87,6 +90,7 @@ The server builds and serves the site by itself, straight from this GitHub repo.
 - **Every day** (early morning, server time) it refreshes the YouTube videos that are due and rebuilds, so dates and "In season now" stay current.
 - **Every month** it checks every source link and rebuilds `/status/` with the ones that broke.
 - **On every build** it downloads any trip photos it doesn't have yet, so new trips get local photos too.
+- `install.sh` writes the site's tailnet address to `~/waypoints/site-url`, outside the repo; builds read it so the calendar feed can link back to trips.
 - Builds run in a throwaway `node:20-alpine` container, so the server needs no Node install. If a refresh or build fails, the last good site stays up.
 - The site is an `nginx:alpine` container (with gzip) bound to `127.0.0.1`, published by `tailscale serve` over HTTPS to your tailnet only (default port 8446). No public ports are opened, and other `tailscale serve` routes on the machine are left alone.
 

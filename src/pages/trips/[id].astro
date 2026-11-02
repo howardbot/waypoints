@@ -10,7 +10,7 @@ import { PHOTOS } from '../../data/photos.js';
 import { COORDS } from '../../data/coords.js';
 import VIDEOS from '../../data/videos.json';
 import { searchUrl, watchUrl, thumbUrl, keepVideos } from '../../lib/youtube.js';
-import { tripMonths, monthsText } from '../../lib/season.js';
+import { tripMonths, monthsText, MONTH_NAMES } from '../../lib/season.js';
 import { upcoming, editionText } from '../../lib/events.js';
 
 export function getStaticPaths() {
@@ -51,10 +51,33 @@ const similar = TRIPS.filter(t => t.id !== trip.id)
     </div>
     <div class="actions">
       <SaveButton id={trip.id} text="Save to wishlist" savedText="Saved to wishlist" />
+      <button type="button" class="btn btn-outline js-plan-open" data-trip-plan={trip.id}><Icon name="calendar" size={16} strokeWidth={2} />Plan it</button>
       <button type="button" class="btn btn-outline js-done-open" data-trip-done={trip.id}><Icon name="check" size={16} strokeWidth={2.25} />I've done this</button>
       {coords && <a class="btn btn-outline" href={`/map/?trip=${trip.id}`}><Icon name="pin" size={16} strokeWidth={2} />On the map</a>}
       {trip.path && <a class="btn btn-primary" href="#path">See the path</a>}
     </div>
+    <form class="card done-form js-plan-form" hidden novalidate>
+      <div class="field">
+        <label for="plan-month">Month</label>
+        <select id="plan-month" class="select">{MONTH_NAMES.map((m, i) => <option value={i + 1}>{m}</option>)}</select>
+      </div>
+      <div class="field">
+        <label for="plan-year">Year</label>
+        <select id="plan-year" class="select"></select>
+      </div>
+      <div class="done-buttons">
+        <button type="submit" class="btn btn-dark">Add to plan</button>
+        <button type="button" class="btn btn-outline js-plan-cancel">Cancel</button>
+      </div>
+      <p class="plan-notes js-plan-notes" aria-live="polite"></p>
+    </form>
+    <p class="done-summary js-plan-summary" hidden>
+      <Icon name="calendar" size={18} strokeWidth={2} />
+      <span><strong>Planned</strong> <span class="js-plan-text"></span></span>
+      <a class="lnk" href="/plan/">See plan</a>
+      <button type="button" class="lnk js-plan-edit">Change</button>
+      <button type="button" class="lnk js-plan-remove">Remove</button>
+    </p>
     <form class="card done-form js-done-form" hidden novalidate>
       <div class="field">
         <label for="done-date">When</label>

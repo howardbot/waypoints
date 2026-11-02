@@ -1,7 +1,10 @@
-// Trip page: mark the trip done (it goes into your logbook), and save the YouTube (or any)
-// videos that inspired it.
-import { getVideos, addVideo, removeVideo, getDone, setDone, clearDone } from './store.js';
+// Trip page: plan the trip for a month, mark it done (it goes into your logbook), and save
+// the YouTube (or any) videos that inspired it.
+import { getVideos, addVideo, removeVideo, getDone, setDone, clearDone, getPlan, setPlan, clearPlan } from './store.js';
 import { ICONS } from './icons.js';
+import { loadTrips } from './trip-data.js';
+import { MONTH_NAMES } from './season.js';
+import { PLAN_YEARS, thisMonth, monthLabel, suggestMonth, planNotes, editionsIn } from './plan.js';
 
 const today = () => new Date().toLocaleDateString('en-CA'); // YYYY-MM-DD in your time zone
 const longDate = iso =>
@@ -52,6 +55,87 @@ function initDone() {
     date.removeAttribute('aria-invalid');
     editing = false;
     setDone(tripId, { date: date.value, note: note.value.trim() });
+  });
+  window.addEventListener('waypoints:change', render);
+  window.addEventListener('storage', render);
+  render();
+}
+
+function initPlan() {
+  const open = document.querySelector('.js-plan-open');
+  const form = document.querySelector('.js-plan-form');
+  const summary = document.querySelector('.js-plan-summary');
+  if (!open || !form || !summary) return;
+  const tripId = open.dataset.tripPlan;
+  const monthSelect = form.querySelector('#plan-month');
+  const yearSelect = form.querySelector('#plan-year');
+  const notesBox = form.querySelector('.js-plan-notes');
+  const now = thisMonth();
+  yearSelect.replaceChildren(...Array.from({ length: PLAN_YEARS }, (_, i) => new Option(String(now.year + i), String(now.year + i))));
+
+  let trips = null;
+  const tripData = async () => {
+    trips ??= await loadTrips().then(list => ({ byId: new Map(list.map(t => [t.id, t])) }));
+    return { ...trips, trip: trips.byId.get(tripId) };
+  };
+  const choice = () => ({ year: Number(yearSelect.value), month: Number(monthSelect.value) });
+  let editing = false;
+
+  // Month names say which months hold the event or are the trip's best; past months are off.
+  const showChoice = async () => {
+    const { trip, byId } = await tripData();
+    if (!trip) return;
+    const year = Number(yearSelect.value);
+    for (const option of monthSelect.options) {
+      const month = Number(option.value);
+      const event = editionsIn(trip, { year, month })[0];
+      const best = !trip.events && trip.months.includes(month);
+      option.textContent = MONTH_NAMES[month - 1] + (event ? ` · ${event.name}` : best ? ' · best' : '');
+      option.disabled = year === now.year && month < now.month;
+    }
+    notesBox.replaceChildren(...planNotes(trip, choice(), getPlan(), byId).map(note => {
+      const line = document.createElement('span');
+      line.dataset.kind = note.kind;
+      line.textContent = note.text;
+      return line;
+    }));
+  };
+
+  const render = async () => {
+    const entry = getPlan()[tripId];
+    open.hidden = Boolean(entry) || editing;
+    form.hidden = !editing;
+    summary.hidden = !entry || editing;
+    if (entry) {
+      const { trip, byId } = await tripData();
+      const notes = trip ? planNotes(trip, entry, getPlan(), byId) : [];
+      summary.querySelector('.js-plan-text').textContent = [monthLabel(entry), ...notes.map(n => n.text)].map(t => `· ${t}`).join(' ');
+    }
+  };
+  const edit = async () => {
+    const { trip, byId } = await tripData();
+    const entry = getPlan()[tripId] ?? (trip ? suggestMonth(trip, getPlan(), now, byId) : now);
+    yearSelect.value = String(Math.min(Math.max(entry.year, now.year), now.year + PLAN_YEARS - 1));
+    monthSelect.value = String(entry.month);
+    editing = true;
+    await showChoice();
+    render();
+    monthSelect.focus();
+  };
+
+  open.addEventListener('click', edit);
+  summary.querySelector('.js-plan-edit').addEventListener('click', edit);
+  summary.querySelector('.js-plan-remove').addEventListener('click', () => clearPlan(tripId));
+  monthSelect.addEventListener('change', showChoice);
+  yearSelect.addEventListener('change', showChoice);
+  form.querySelector('.js-plan-cancel').addEventListener('click', () => {
+    editing = false;
+    render();
+  });
+  form.addEventListener('submit', event => {
+    event.preventDefault();
+    editing = false;
+    setPlan(tripId, choice());
   });
   window.addEventListener('waypoints:change', render);
   window.addEventListener('storage', render);
@@ -141,6 +225,7 @@ function videoCard(url, index) {
 }
 
 export function initTripPage() {
+  initPlan();
   initDone();
   const root = document.querySelector('[data-videos]');
   if (!root) return;

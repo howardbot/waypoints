@@ -27,4 +27,11 @@ systemctl enable --now waypoints-update.timer waypoints-videos.timer waypoints-l
 # Only this port's handler is touched; other Serve routes on the machine stay as they are.
 tailscale serve --bg --https="$ts_port" "http://127.0.0.1:$port" >/dev/null
 
+# The site's own address, for links in the calendar feed (refresh.sh reads it at build time).
+dns="$(tailscale status --json | python3 -c 'import json, sys; print(json.load(sys.stdin)["Self"]["DNSName"].rstrip("."))' 2>/dev/null || true)"
+if [[ -n "$dns" ]]; then
+  echo "https://$dns:$ts_port" > "$base/site-url"
+  chown "$user": "$base/site-url"
+fi
+
 systemctl list-timers 'waypoints-*' --no-pager

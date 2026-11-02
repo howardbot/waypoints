@@ -13,6 +13,7 @@ REPO="$BASE/repo"
 PORT="${WAYPOINTS_PORT:-8096}"
 NODE_IMAGE="node:20-alpine"
 KEY_FILE="$BASE/youtube.env"   # YOUTUBE_API_KEY=..., written by set-youtube-key.sh
+SITE_URL_FILE="$BASE/site-url"  # the site's tailnet address, written by install.sh
 VIDEOS="$BASE/videos.json"     # last good YouTube results, kept outside the repo
 FETCHED="$BASE/videos-fetched.json"  # when each trip's videos were fetched
 LINKS="$BASE/link-status.json" # last source-link check, for the /status/ page
@@ -95,7 +96,9 @@ if $videos; then
 fi
 
 node_run "$NODE_IMAGE" npm test --silent
-node_run "$NODE_IMAGE" npm run build --silent
+# The calendar feed links back to trips with the site's own address, kept out of the repo.
+site_url="$(cat "$SITE_URL_FILE" 2>/dev/null || true)"
+node_run -e SITE_URL="$site_url" "$NODE_IMAGE" npm run build --silent
 
 # Swap the new build in, then recreate the container so its bind mount follows.
 cp "$REPO/deploy/docker-compose.yml" "$REPO/deploy/nginx.conf" "$BASE/"

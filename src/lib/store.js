@@ -1,4 +1,4 @@
-// Per-browser state: your skill levels, saved trips, trips you've done and saved videos.
+// Per-browser state: your skill levels, saved trips, trips you've done or planned, and saved videos.
 // Falls back to memory when localStorage is unavailable (private mode, blocked storage).
 import { TRACKS, DEFAULT_SKILLS } from '../data/skills.js';
 
@@ -73,6 +73,34 @@ export function clearDone(id) {
     const done = { ...doneMap(data.done) };
     delete done[id];
     data.done = done;
+  });
+}
+
+const isMonth = entry => Number.isInteger(entry?.year) && Number.isInteger(entry?.month) && entry.month >= 1 && entry.month <= 12;
+
+/** Trips you plan to do: { [tripId]: { year, month } }. */
+export function getPlan() {
+  return Object.fromEntries(Object.entries(doneMap(read().plan)).filter(([, entry]) => isMonth(entry)));
+}
+
+export function setPlan(id, { year, month }) {
+  update(data => {
+    data.plan = { ...doneMap(data.plan), [id]: { year: Number(year), month: Number(month) } };
+  });
+}
+
+/** Add several plans at once (the planner's suggestions). */
+export function addPlans(entries) {
+  update(data => {
+    data.plan = { ...doneMap(data.plan), ...entries };
+  });
+}
+
+export function clearPlan(id) {
+  update(data => {
+    const plan = { ...doneMap(data.plan) };
+    delete plan[id];
+    data.plan = plan;
   });
 }
 
