@@ -19,13 +19,14 @@ import { JOURNEYS } from './catalog/journeys.js';
 import { RESEARCHED } from './catalog/researched.js';
 
 // boat: a boat you drive yourself or ride slowly (narrowboat, houseboat, river boat).
-// sled: snow travel (dog sled, snowmobile, skis). make: workshop and maker trips.
+// horse: riding animals (horses, camels). sled: snow travel (dog sled, snowmobile, skis).
+// make: workshop and maker trips.
 export const MODES = ['fly', 'sail', 'paddle', 'drive', 'ferry', 'boat', 'train', 'bike', 'horse', 'sled'];
 export const ACTIVITIES = ['views', 'camp', 'dive', 'snorkel', 'spearfish', 'hike', 'fish', 'track', 'shoot', 'make'];
 
 export const LABEL = {
   fly: 'Fly', sail: 'Sail', paddle: 'Paddle', drive: 'Drive', ferry: 'Ferry',
-  boat: 'Boat', train: 'Train', bike: 'Bike', horse: 'Horse', sled: 'Snow',
+  boat: 'Boat', train: 'Train', bike: 'Bike', horse: 'Horse & camel', sled: 'Snow',
   views: 'Views', camp: 'Camp', dive: 'Dive', snorkel: 'Snorkel', spearfish: 'Spearfish', hike: 'Hike', fish: 'Fish', track: 'Track day', shoot: 'Shoot', make: 'Workshop',
 };
 
