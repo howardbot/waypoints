@@ -88,6 +88,9 @@ node_run -v "$PHOTOS:/photos" "$NODE_IMAGE" node scripts/fetch-photos.mjs /photo
 mkdir -p "$REPO/public/photos/commons"
 cp -a "$PHOTOS/." "$REPO/public/photos/commons/"
 
+# Look on organizers' pages for newly announced event dates (a few seconds; see /status/).
+node_run "$NODE_IMAGE" node scripts/check-dates.mjs || log "Date check failed; building without it"
+
 if $videos; then
   if [[ -f "$KEY_FILE" ]]; then
     if node_run --env-file "$KEY_FILE" "$NODE_IMAGE" node scripts/fetch-videos.mjs; then

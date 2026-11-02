@@ -1,12 +1,14 @@
 ---
 // Site health, rebuilt every day on the server: source links that broke (monthly check),
-// events still on estimated dates, and how many trips have videos and local photos.
+// event dates spotted on organizers' pages (every build), events still on estimated dates,
+// and how many trips have videos and local photos.
 import Base from '../layouts/Base.astro';
 import { TRIPS } from '../data/trips.js';
 import { PHOTOS } from '../data/photos.js';
 import { EVENTS } from '../data/events.js';
 import VIDEOS from '../data/videos.json';
 import LINKS from '../data/link-status.json';
+import WATCH from '../data/date-watch.json';
 import { estimatedEvents, editionText } from '../lib/events.js';
 import { localize } from '../lib/local-photo.js';
 
@@ -15,6 +17,18 @@ const links = LINKS as { checkedAt?: string; total?: number; counts?: Record<str
 const needsLook = (links.problems ?? []).filter(p => p.status !== 'blocked');
 const blocked = (links.problems ?? []).filter(p => p.status === 'blocked');
 const estimated = estimatedEvents();
+const watch = WATCH as { checkedAt?: string; results?: { id: string; name: string; year: number; url: string; status: string; quotes: string[] }[] };
+const watchResults = watch.results ?? [];
+const spotted = watchResults.filter(r => r.status === 'dates' || r.status === 'mentioned').sort((a, b) => a.status.localeCompare(b.status));
+const watchFor = (id: string, name: string) => watchResults.find(r => r.id === id && r.name === name);
+const WATCH_TEXT: Record<string, string> = {
+  dates: 'dates spotted',
+  mentioned: 'year mentioned, no dates',
+  none: 'nothing new on their page',
+  blocked: 'their site blocks checks: look in a browser',
+  gone: 'their page is gone',
+  error: "couldn't reach their page",
+};
 const eventCount = Object.values(EVENTS).flat().length;
 const withVideos = TRIPS.filter(t => ((VIDEOS as Record<string, any[]>)[t.id] ?? []).length > 0).length;
 const photos = Object.values(PHOTOS);
@@ -36,6 +50,7 @@ const day = (iso?: string) => (iso ? iso.slice(0, 10) : 'not yet');
       <div class="status-tile"><strong>{localPhotos}/{photos.length}</strong>photos served from this site</div>
       <div class="status-tile"><strong>{links.total ? links.counts?.ok : '—'}</strong>source links OK{links.total ? ` of ${links.total}` : ''}</div>
       <div class="status-tile"><strong>{eventCount - estimated.length}/{eventCount}</strong>events with confirmed next dates</div>
+      <div class="status-tile"><strong>{watch.checkedAt ? spotted.filter(r => r.status === 'dates').length : '—'}</strong>new event dates spotted</div>
     </div>
 
     <h2 class="display h3" style="margin-bottom: 12px">Source links</h2>
@@ -55,17 +70,36 @@ const day = (iso?: string) => (iso ? iso.slice(0, 10) : 'not yet');
     )}
     {blocked.length > 0 && <p class="muted small" style="margin-bottom: 40px">{blocked.length} links blocked automated checks.</p>}
 
-    <h2 class="display h3" style="margin: 24px 0 12px">Event dates</h2>
-    <p class="muted small">These events haven't announced their next dates, so trip pages show an estimate from the usual pattern. Add the real dates to events.js once they're out.</p>
+    <h2 class="display h3" style="margin: 24px 0 12px">Spotted on organizer pages</h2>
+    <p class="muted small">Each build looks on the organizers' pages for the next year that's only an estimate here. Last checked: {day(watch.checkedAt)}. Confirm on their page, then add the dates to events.js.</p>
+    {spotted.length ? (
+      <div class="rows" style="margin-bottom: 24px">
+        {spotted.map(r => (
+          <div class="row">
+            <a class="row-main lnk" href={r.url} target="_blank" rel="noopener noreferrer">{r.name} {r.year}</a>
+            <span class="row-meta watch-quote">“{r.quotes[0]}”</span>
+            <span class="row-state" data-state={r.status === 'dates' ? 'ready' : undefined}>{r.status === 'dates' ? 'NEW DATES?' : 'MENTIONED'}</span>
+          </div>
+        ))}
+      </div>
+    ) : (
+      <p class="empty-row" style="margin-bottom: 24px">{watch.checkedAt ? 'No new dates spotted yet.' : 'The first check runs with the next server build.'}</p>
+    )}
+
+    <h2 class="display h3" style="margin: 24px 0 12px">Still estimated</h2>
+    <p class="muted small">These events haven't announced their next dates, so trip pages show an estimate from the usual pattern.</p>
     {estimated.length ? (
       <div class="rows">
-        {estimated.map(e => (
-          <a class="row" href={`/trips/${e.id}/`}>
-            <span class="row-main">{e.name}</span>
-            <span class="row-meta">{editionText(e.next)}</span>
-            <span class="row-state">ESTIMATE</span>
-          </a>
-        ))}
+        {estimated.map(e => {
+          const check = watchFor(e.id, e.name);
+          return (
+            <a class="row" href={`/trips/${e.id}/`}>
+              <span class="row-main">{e.name}</span>
+              <span class="row-meta">{editionText(e.next)}{check && ` · ${WATCH_TEXT[check.status]}`}</span>
+              <span class="row-state">ESTIMATE</span>
+            </a>
+          );
+        })}
       </div>
     ) : (
       <p class="empty-row">Every event's next date is confirmed.</p>

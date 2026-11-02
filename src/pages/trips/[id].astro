@@ -12,6 +12,7 @@ import VIDEOS from '../../data/videos.json';
 import { searchUrl, watchUrl, thumbUrl, keepVideos } from '../../lib/youtube.js';
 import { tripMonths, monthsText, MONTH_NAMES } from '../../lib/season.js';
 import { upcoming, editionText } from '../../lib/events.js';
+import WATCH from '../../data/date-watch.json';
 
 export function getStaticPaths() {
   return TRIPS.map(trip => ({ params: { id: trip.id }, props: { trip } }));
@@ -23,6 +24,8 @@ const recommended: { id: string; title: string; channel: string }[] = keepVideos
 const chain = `${trip.get.map((m: string) => LABEL[m].toUpperCase()).join(' · ')} → ${trip.do.map((a: string) => LABEL[a].toUpperCase()).join(' · ')}`;
 const coords = (COORDS as Record<string, [number, number]>)[trip.id];
 const events = upcoming(trip.id);
+// Signs on the organizer's page that the next estimated year has been announced (scripts/check-dates.mjs).
+const spotted = ((WATCH as any).results ?? []).filter((r: any) => r.id === trip.id && (r.status === 'dates' || r.status === 'mentioned'));
 const glance = [
   ['Get there', trip.get.map((m: string) => LABEL[m]).join(' · ')],
   ['Best months', monthsText(tripMonths(trip, coords?.[0]))],
@@ -123,6 +126,12 @@ const similar = TRIPS.filter(t => t.id !== trip.id)
               <ul>
                 {e.editions.map(ed => <li class:list={{ est: ed.estimated }}>{editionText(ed)}</li>)}
               </ul>
+              {spotted.filter((r: any) => r.name === e.name).map((r: any) => (
+                <span class="watch-note">
+                  {r.status === 'dates' ? `The organizer's page may list ${r.year} dates now: “${r.quotes[0]}”` : `The organizer's page mentions ${r.year}, but no dates yet.`}{' '}
+                  <a class="lnk" href={r.url} target="_blank" rel="noopener noreferrer">Check</a>
+                </span>
+              ))}
               {(e.usually || e.editions.some(ed => ed.estimated)) && (
                 <span class="usual">
                   {e.usually && `Usually ${e.usually}.`}

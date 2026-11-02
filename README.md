@@ -91,6 +91,7 @@ The server builds and serves the site by itself, straight from this GitHub repo.
 - **Every day** (early morning, server time) it refreshes the YouTube videos that are due and rebuilds, so dates and "In season now" stay current.
 - **Every month** it checks every source link and rebuilds `/status/` with the ones that broke.
 - **On every build** it downloads any trip photos it doesn't have yet, so new trips get local photos too.
+- **On every build** it also looks on each event organizer's page for the next year that's only an estimate here, and flags dates it spots on `/status/` and the trip page, so they can be confirmed and added to `events.js`.
 - `install.sh` writes the site's tailnet address to `~/waypoints/site-url`, outside the repo; builds read it so the calendar feed can link back to trips.
 - Builds run in a throwaway `node:20-alpine` container, so the server needs no Node install. If a refresh or build fails, the last good site stays up.
 - The site is an `nginx:alpine` container (with gzip) bound to `127.0.0.1`, published by `tailscale serve` over HTTPS to your tailnet only (default port 8446). No public ports are opened, and other `tailscale serve` routes on the machine are left alone.
