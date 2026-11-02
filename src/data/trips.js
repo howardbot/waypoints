@@ -392,7 +392,7 @@ const STARTER_TRIPS = [
       ['Check', 'Camping, noise and insurance rules'],
     ],
     headsUp: 'Ask the track about paddock camping and noise rules, and check your insurance before you book.',
-    sources: [{ label: 'Track Night in America, SCCA', url: 'https://www.scca.com/pages/track-night-in-america' }],
+    sources: [{ label: 'Track Days and Track Night in America, SCCA', url: 'https://www.scca.com/pages/scca-track-events' }],
     youtube: ['first HPDE track day', 'track day paddock camping'],
     youtubeSkip: ['0MoGJxCYYQY', 'j-_nTt1UfQ4', '661KOLtwCvE'], // pro paddock tour, oval fan camping, tent advert
   },

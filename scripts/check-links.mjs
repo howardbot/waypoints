@@ -2,8 +2,9 @@
 // The server runs this monthly (waypoints-links.timer). No API keys involved.
 //
 //   ok       the page loaded
-//   blocked  the site refused an automated check (401/403/429/451): usually fine in a browser
 //   gone     404 or 410: the page moved or was removed, so the trip needs a new source
+//   blocked  any other 4xx (401, 403, 405, 429, sites' own codes): the site refused an
+//            automated check from a server, and the page usually opens fine in a browser
 //   error    anything else (timeouts, DNS, server errors): worth a look
 import { writeFile } from 'node:fs/promises';
 import { TRIPS } from '../src/data/trips.js';
@@ -29,7 +30,7 @@ async function check(url) {
     });
     res.body?.cancel().catch(() => {});
     const code = res.status;
-    const status = res.ok ? 'ok' : [401, 403, 429, 451].includes(code) ? 'blocked' : [404, 410].includes(code) ? 'gone' : 'error';
+    const status = res.ok ? 'ok' : [404, 410].includes(code) ? 'gone' : code >= 400 && code < 500 ? 'blocked' : 'error';
     return { status, code };
   } catch (err) {
     return { status: 'error', code: 0, detail: String(err.cause?.code ?? err.name ?? err.message) };
