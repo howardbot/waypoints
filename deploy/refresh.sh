@@ -8,6 +8,11 @@
 #   refresh.sh --force    rebuild even if nothing changed
 set -euo pipefail
 
+# Everything is in main(), so bash reads the whole script before running any of it: the
+# git reset below can replace this file mid-run.
+main() {
+local script_sum
+script_sum="$(cksum < "$0")" # this script as it was when it started
 BASE="${WAYPOINTS_DIR:-$HOME/waypoints}"
 REPO="$BASE/repo"
 PORT="${WAYPOINTS_PORT:-8096}"
@@ -44,6 +49,10 @@ if ! $videos && ! $links && ! $force && [[ -f "$BUILT" && "$(cat "$BUILT")" == "
 fi
 git -C "$REPO" reset -q --hard "$head"
 git -C "$REPO" clean -qfdx -e node_modules
+# That may have updated this script: carry on with the new copy, once.
+if [[ -z "${WAYPOINTS_RESTARTED:-}" && "$(cksum < "$REPO/deploy/refresh.sh")" != "$script_sum" ]]; then
+  WAYPOINTS_RESTARTED=1 exec bash "$REPO/deploy/refresh.sh" "$@"
+fi
 log "Building $(git -C "$REPO" log -1 --format='%h %s')"
 
 # Node runs in a throwaway container as this user, so the host needs no Node install.
@@ -119,3 +128,6 @@ done
 curl -fs -o /dev/null "http://127.0.0.1:$PORT/" || { log "Site did not come back up on port $PORT"; exit 1; }
 echo "$head" > "$BUILT"
 log "Live: $(git -C "$REPO" log -1 --format='%h %s')"
+}
+
+main "$@"
