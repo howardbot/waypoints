@@ -101,6 +101,16 @@ test('trip data is consistent', () => {
   }
 });
 
+test('"Fly myself" and "Small aircraft" are kept apart', () => {
+  for (const t of TRIPS) {
+    if (t.req?.skill === 'fly') assert.ok(t.get.includes('fly'), `${t.id}: needs a pilot level, so it should be Fly myself`);
+    if (t.get.includes('air')) assert.notEqual(t.req?.skill, 'fly', `${t.id}: a Small aircraft ride shouldn't need a pilot level`);
+    for (const w of t.ways ?? []) {
+      if (w.mode === 'air') assert.notEqual(w.req?.skill, 'fly', `${t.id}: a passenger way shouldn't need a pilot level`);
+    }
+  }
+});
+
 test('every trip has a credited photo, at least one https source and YouTube terms', () => {
   for (const t of TRIPS) {
     const photo = PHOTOS[t.id];

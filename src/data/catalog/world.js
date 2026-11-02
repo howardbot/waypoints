@@ -277,7 +277,7 @@ export const WORLD = [
     region: 'asia',
     season: 'Mar–May and Oct–Nov',
     length: 'Two weeks',
-    get: ['fly'],
+    get: ['air'],
     do: ['views', 'hike', 'camp'],
     isNew: true,
     req: null,

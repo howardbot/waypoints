@@ -4,6 +4,8 @@
 
 A personal adventure site: a logbook of trips and skills, plus a recommender for *combos*. A combo is a way to get somewhere (fly, sail, paddle, drive, ferry) plus what you do once you arrive (camp, dive, snorkel, spearfish, hike, fish, track day). Fly-in camping, sail-to-camp islands, diving or spearfishing at the end of the trip.
 
+Flying comes in two kinds. **Fly myself** means you fly the plane, alone or with your instructor, and those trips follow your flying skill track. **Small aircraft** means someone else flies a bush plane, floatplane, air taxi, helicopter, glider or balloon that is part of the adventure. An airline flight that just gets you to a place isn't listed as a way there.
+
 Trips are ranked for the skills you have today, so each one shows as:
 
 - **Ready now**: you can go.

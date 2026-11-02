@@ -18,14 +18,17 @@ import { WORLD } from './catalog/world.js';
 import { JOURNEYS } from './catalog/journeys.js';
 import { RESEARCHED } from './catalog/researched.js';
 
+// fly: you fly the plane yourself (or with your instructor). air: someone else flies a small
+// aircraft that is part of the adventure (bush plane, floatplane, air taxi, helicopter, glider
+// ride, balloon). An airline flight just to reach a place doesn't count as a way there.
 // boat: a boat you drive yourself or ride slowly (narrowboat, houseboat, river boat).
 // horse: riding animals (horses, camels). sled: snow travel (dog sled, snowmobile, skis).
 // make: workshop and maker trips.
-export const MODES = ['fly', 'sail', 'paddle', 'drive', 'ferry', 'boat', 'train', 'bike', 'horse', 'sled'];
+export const MODES = ['fly', 'air', 'sail', 'paddle', 'drive', 'ferry', 'boat', 'train', 'bike', 'horse', 'sled'];
 export const ACTIVITIES = ['views', 'camp', 'dive', 'snorkel', 'spearfish', 'hike', 'fish', 'track', 'shoot', 'make'];
 
 export const LABEL = {
-  fly: 'Fly', sail: 'Sail', paddle: 'Paddle', drive: 'Drive', ferry: 'Ferry',
+  fly: 'Fly myself', air: 'Small aircraft', sail: 'Sail', paddle: 'Paddle', drive: 'Drive', ferry: 'Ferry',
   boat: 'Boat', train: 'Train', bike: 'Bike', horse: 'Horse & camel', sled: 'Snow',
   views: 'Views', camp: 'Camp', dive: 'Dive', snorkel: 'Snorkel', spearfish: 'Spearfish', hike: 'Hike', fish: 'Fish', track: 'Track day', shoot: 'Shoot', make: 'Workshop',
 };
@@ -231,7 +234,7 @@ const STARTER_TRIPS = [
     region: 'us-southeast',
     season: 'Year-round',
     length: 'Weekend',
-    get: ['ferry', 'fly', 'sail'],
+    get: ['ferry', 'air', 'sail'],
     do: ['camp', 'snorkel'],
     photo: 'Fort Jefferson from the air',
     tone: '#1D3A52',
@@ -255,7 +258,7 @@ const STARTER_TRIPS = [
         notes: { ready: 'Ready now.' },
       },
       {
-        mode: 'fly',
+        mode: 'air',
         title: 'Seaplane from Key West',
         detail: 'Ride along on a seaplane charter and land on the water beside the fort.',
         req: null,
@@ -590,7 +593,7 @@ const STARTER_TRIPS = [
     region: 'us-alaska',
     season: 'Summer',
     length: 'A week',
-    get: ['fly'],
+    get: ['air'],
     do: ['views', 'camp', 'fish', 'hike'],
     photo: 'Lake below the mountains',
     tone: '#22364A',
