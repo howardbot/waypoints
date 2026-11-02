@@ -44,6 +44,18 @@ import { STATS, LOGBOOK, fmt } from '../data/logbook.js';
     </div>
   </section>
 
+  <section class="wrap section" id="done">
+    <div class="section-head">
+      <div class="stack">
+        <span class="eyebrow">Trips done</span>
+        <h2 class="display h2">Where I've been: <span data-done-count>0</span></h2>
+      </div>
+    </div>
+    <div class="chips js-done-tally" aria-label="Trips done by activity" hidden></div>
+    <div class="rows js-done-list" hidden></div>
+    <p class="empty-row js-done-empty">Nothing logged yet. Open any trip and tap "I've done this" to add it here.</p>
+  </section>
+
   <section class="wrap section" id="wishlist">
     <div class="section-head">
       <div class="stack">

@@ -7,8 +7,11 @@ import Note from '../../components/Note.astro';
 import SaveButton from '../../components/SaveButton.astro';
 import { TRIPS, LABEL, VIA } from '../../data/trips.js';
 import { PHOTOS } from '../../data/photos.js';
+import { COORDS } from '../../data/coords.js';
 import VIDEOS from '../../data/videos.json';
 import { searchUrl, watchUrl, thumbUrl, keepVideos } from '../../lib/youtube.js';
+import { tripMonths, monthsText } from '../../lib/season.js';
+import { datesLine } from '../../lib/events.js';
 
 export function getStaticPaths() {
   return TRIPS.map(trip => ({ params: { id: trip.id }, props: { trip } }));
@@ -18,7 +21,14 @@ const { trip } = Astro.props as { trip: any };
 const photo = trip.image ? null : (PHOTOS as Record<string, any>)[trip.id];
 const recommended: { id: string; title: string; channel: string }[] = keepVideos(trip, (VIDEOS as Record<string, any>)[trip.id]);
 const chain = `${trip.get.map((m: string) => LABEL[m].toUpperCase()).join(' · ')} → ${trip.do.map((a: string) => LABEL[a].toUpperCase()).join(' · ')}`;
-const glance = [['Get there', trip.get.map((m: string) => LABEL[m]).join(' · ')], ...(trip.glance ?? [])];
+const coords = (COORDS as Record<string, [number, number]>)[trip.id];
+const dates = datesLine(trip.id);
+const glance = [
+  ['Get there', trip.get.map((m: string) => LABEL[m]).join(' · ')],
+  ['Best months', monthsText(tripMonths(trip, coords?.[0]))],
+  ...(dates ? [['Dates', dates]] : []),
+  ...(trip.glance ?? []),
+];
 const waysTitle = ['One way', 'Two ways', 'Three ways', 'Four ways', 'Five ways'][(trip.ways?.length ?? 1) - 1] ?? 'Ways';
 
 // Similar trips share the most activities and ways of getting there.
@@ -42,8 +52,30 @@ const similar = TRIPS.filter(t => t.id !== trip.id)
     </div>
     <div class="actions">
       <SaveButton id={trip.id} text="Save to wishlist" savedText="Saved to wishlist" />
+      <button type="button" class="btn btn-outline js-done-open" data-trip-done={trip.id}><Icon name="check" size={16} strokeWidth={2.25} />I've done this</button>
+      {coords && <a class="btn btn-outline" href={`/map/?trip=${trip.id}`}><Icon name="pin" size={16} strokeWidth={2} />On the map</a>}
       {trip.path && <a class="btn btn-primary" href="#path">See the path</a>}
     </div>
+    <form class="card done-form js-done-form" hidden novalidate>
+      <div class="field">
+        <label for="done-date">When</label>
+        <input id="done-date" class="input" type="date" required />
+      </div>
+      <div class="field done-note">
+        <label for="done-note">Note (optional)</label>
+        <input id="done-note" class="input" type="text" maxlength="200" placeholder="Who you went with, what you'd do again…" />
+      </div>
+      <div class="done-buttons">
+        <button type="submit" class="btn btn-dark">Save to logbook</button>
+        <button type="button" class="btn btn-outline js-done-cancel">Cancel</button>
+      </div>
+    </form>
+    <p class="done-summary js-done-summary" hidden>
+      <Icon name="check" size={18} strokeWidth={2.25} />
+      <span><strong>Done</strong> <span class="js-done-text"></span></span>
+      <button type="button" class="lnk js-done-edit">Edit</button>
+      <button type="button" class="lnk js-done-remove">Remove</button>
+    </p>
   </section>
 
   <section class="wrap detail-hero">

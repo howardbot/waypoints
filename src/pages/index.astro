@@ -69,6 +69,17 @@ const monthYear = (d: Date) => d.toLocaleDateString('en-US', { month: 'short', y
     </div>
   </section>
 
+  <section class="wrap section" id="in-season">
+    <div class="section-head">
+      <div class="stack">
+        <span class="eyebrow">In season now</span>
+        <h2 class="display h2 js-season-title">Good to go this month</h2>
+      </div>
+      <a class="lnk js-season-link" href="/discover/">See all for this month →</a>
+    </div>
+    <div class="grid-cards js-season-cards" aria-busy="true"></div>
+  </section>
+
   <section class="wrap section" id="combos">
     <div class="section-head">
       <div class="stack">
@@ -99,7 +110,11 @@ const monthYear = (d: Date) => d.toLocaleDateString('en-US', { month: 'short', y
           <h2 class="display h2">So far</h2>
         </div>
         <div class="tiles">
-          {HOME_TILES.map(key => (
+          <div class="tile">
+            <span class="tile-value" data-done-count>0</span>
+            <span class="tile-label">Trips done</span>
+          </div>
+          {HOME_TILES.slice(0, 5).map(key => (
             <div class="tile">
               <span class="tile-value">{fmt(STATS[key].value)}</span>
               <span class="tile-label">{STATS[key].label}</span>
@@ -148,6 +163,11 @@ const monthYear = (d: Date) => d.toLocaleDateString('en-US', { month: 'short', y
       <p class="empty-row">No entries yet. Trip reports, builds and skill logs will show up here.</p>
     )}
   </section>
+
+  <script>
+    import { initInSeason } from '../lib/in-season.js';
+    initInSeason();
+  </script>
 
   <script>
     const box = document.getElementById('builder');

@@ -2,7 +2,7 @@
 // save buttons from what this browser has stored. Pages are built with the
 // default skills, so this brings them up to date with yours.
 import { TRACKS } from '../data/skills.js';
-import { getSkills, getSaved, toggleSaved } from './store.js';
+import { getSkills, getSaved, toggleSaved, getDone } from './store.js';
 import { readiness, stepStatus, STATE_LABEL } from './recommend.js';
 
 const parse = json => {
@@ -61,12 +61,24 @@ function syncSaved() {
   });
 }
 
+// Cards for trips you've done get a DONE tag (see .trip-card[data-done] in global.css).
+function syncDone() {
+  const done = getDone();
+  document.querySelectorAll('[data-trip-id]').forEach(card => {
+    card.dataset.done = String(Boolean(done[card.dataset.tripId]));
+  });
+  document.querySelectorAll('[data-done-count]').forEach(el => {
+    el.textContent = String(Object.keys(done).length);
+  });
+}
+
 export function syncAll() {
   const skills = getSkills();
   syncBadges(skills);
   syncNotes(skills);
   syncTracks(skills);
   syncSaved();
+  syncDone();
 }
 
 export function initShared() {

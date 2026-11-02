@@ -16,11 +16,13 @@ Trips are ranked for the skills you have today, so each one shows as:
 
 | Path | What it is |
 | --- | --- |
-| `/` | Home: combo builder, recommended trips, skills in progress, logbook totals |
-| `/discover/` | The recommender: filter by way there, activities, region and skills |
-| `/trips/<id>/` | One trip: ways to get there, your path from first try to doing it yourself, pack list, saved videos |
-| `/logbook/` | Skill tracks (tap the step you're on), totals by activity, wishlist |
+| `/` | Home: combo builder, trips in season this month, recommended trips, skills in progress, logbook totals |
+| `/discover/` | The recommender: search, then filter by way there, activities, region, month and skills |
+| `/map/` | Every trip on a world map, colored by how ready you are (Leaflet + OpenStreetMap) |
+| `/trips/<id>/` | One trip: best months, next event dates, ways to get there, your path, pack list, "I've done this", saved videos |
+| `/logbook/` | Skill tracks (tap the step you're on), trips you've done, totals by activity, wishlist |
 | `/entries/` | Trip reports, builds and skill logs written in Markdown |
+| `/status/` | Site health: broken source links, events that need new dates, video and photo coverage |
 
 ## How the recommender works
 
@@ -39,14 +41,18 @@ Scores add up from four parts ([`src/lib/recommend.js`](src/lib/recommend.js)):
 - 20 / 14 / 6 for ready now / with a guide / goal trip
 - +12 for new-to-you trips when "Mix in things I've never tried" is on
 
-Your skill levels, saved trips and saved video links stay in the browser (`localStorage`). There are no accounts and no backend.
+Your skill levels, saved trips, trips you've done and saved video links stay in the browser (`localStorage`). There are no accounts and no backend.
+
+Discover, the home page, the logbook and the map load one slim file, `/trips.json` ([`src/lib/compact.js`](src/lib/compact.js)), and build the cards in the browser, so no page downloads the whole catalog.
 
 ## Trips, photos and sources
 
 The catalog covers 260 trips worldwide: the US (including Alaska and Hawaii), Canada, the Caribbean, Mexico and Latin America, Europe, Africa and the Middle East, Asia, Australia and New Zealand, the Pacific and the polar regions. [`researched.js`](src/data/catalog/researched.js) holds 168 trips suggested in four rounds of ChatGPT and Gemini research; each was checked before it went in (every source opened, specific claims matched against the sources, anything unconfirmed corrected or removed), and the trip page credits the model that found it. The Discover page filters by region ("United States (all)" covers every US region) and shows 18 results at a time. The first 21 trips are in `src/data/trips.js`; the rest are in `src/data/catalog/`, in the same format. [`journeys.js`](src/data/catalog/journeys.js) collects new ways to travel through beautiful places: narrowboats and houseboats, scenic trains, slow ferries, bike paths, horses, dog sleds and balloons. [`shore.js`](src/data/catalog/shore.js) collects "chasing the sea" (赶海) trips: gathering clams and shellfish on the flats at low tide, and catching crabs and lobsters by hand, net, trap or pot (no rod fishing), from China, Japan, Korea and Taiwan to Brittany and the US coasts. These show under the **Clams & crabs** activity. The **Views** activity marks the most scenic trips.
 
 - **Sources:** every trip lists the pages its facts come from (park services, airports, regulators), shown at the bottom of the trip page. Rules, prices and seasons change, so check them before a trip.
-- **Photos:** every trip has a freely licensed photo from Wikimedia Commons ([`src/data/photos.js`](src/data/photos.js)), credited on the trip page and on `/credits/`. To use your own, drop it in `public/photos/` and add `image: '/photos/name.jpg'` to the trip.
+- **Photos:** every trip has a freely licensed photo from Wikimedia Commons ([`src/data/photos.js`](src/data/photos.js)), credited on the trip page and on `/credits/`. The server downloads each photo once and serves it itself ([`scripts/fetch-photos.mjs`](scripts/fetch-photos.mjs)); until a photo is downloaded, pages load it from Wikimedia. To use your own, drop it in `public/photos/` and add `image: '/photos/name.jpg'` to the trip.
+- **Seasons:** each trip's `season` text is read into months ([`src/lib/season.js`](src/lib/season.js)) for the month filter, "In season now" and the map. Text it can't read gets an entry in [`src/data/months.js`](src/data/months.js). Season words follow the hemisphere, using the trip's coordinates ([`src/data/coords.js`](src/data/coords.js), geocoded with OpenStreetMap).
+- **Event dates:** trips that happen on specific days list them in [`src/data/events.js`](src/data/events.js). The trip page shows the next date, or "last held" once they've passed, and `/status/` lists the events that need next year's dates. Keep year-specific dates out of the trip text; a test checks.
 
 ## YouTube
 
@@ -59,6 +65,7 @@ Each trip has `youtube` search terms:
 ## Make it yours
 
 - **Add a trip:** copy an object in `src/data/trips.js`. Run `npm test` and it checks ids, skills, levels, photos and sources.
+- **Log a trip:** open it and tap "I've done this"; it shows up in the logbook with the date and your note.
 - **Your numbers:** replace the `null` values in `src/data/logbook.js`.
 - **Skill tracks and unlock text:** `src/data/skills.js`.
 - **Write an entry:** copy `src/content/entries/example-entry.md`, then set `draft: false`.
@@ -77,9 +84,11 @@ npm run build    # static site in dist/
 The server builds and serves the site by itself, straight from this GitHub repo. No laptop is involved:
 
 - **Every hour** it checks GitHub and rebuilds if there are new commits, so a push (even from the GitHub website) goes live within the hour.
-- **Every day** (early morning, server time) it refreshes the YouTube videos that are due and rebuilds.
+- **Every day** (early morning, server time) it refreshes the YouTube videos that are due and rebuilds, so dates and "In season now" stay current.
+- **Every month** it checks every source link and rebuilds `/status/` with the ones that broke.
+- **On every build** it downloads any trip photos it doesn't have yet, so new trips get local photos too.
 - Builds run in a throwaway `node:20-alpine` container, so the server needs no Node install. If a refresh or build fails, the last good site stays up.
-- The site is an `nginx:alpine` container bound to `127.0.0.1`, published by `tailscale serve` over HTTPS to your tailnet only (default port 8446). No public ports are opened, and other `tailscale serve` routes on the machine are left alone.
+- The site is an `nginx:alpine` container (with gzip) bound to `127.0.0.1`, published by `tailscale serve` over HTTPS to your tailnet only (default port 8446). No public ports are opened, and other `tailscale serve` routes on the machine are left alone.
 
 One-time server setup (needs Docker with Compose, Tailscale logged in, and passwordless `sudo`):
 
@@ -94,7 +103,7 @@ Handy commands on the server:
 
 ```bash
 systemctl list-timers 'waypoints-*'                  # when the next runs are
-journalctl -u waypoints-update -u waypoints-videos   # what happened
+journalctl -u waypoints-update -u waypoints-videos -u waypoints-links   # what happened
 sudo systemctl start waypoints-update.service        # rebuild now
 ```
 

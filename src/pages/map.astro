@@ -1,0 +1,54 @@
+---
+import Base from '../layouts/Base.astro';
+import { LABEL, ACTIVITIES, MODES } from '../data/meta.js';
+import { MONTH_NAMES } from '../lib/season.js';
+---
+<Base title="Map" description="Every trip on a world map, colored by how ready you are for it.">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" integrity="sha512-h9FcoyWjHcOcmEVkxOfTLnmZFWIH0iZhZT1H2TbOq55xssQGEJHEaIm+PgoUaZbRvQTNTluNOEfb1ZRy6D3BOw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js" integrity="sha512-puJW3E/qXDqYp9IfhAI54BJEaWIfloJ7JWs7OeD5i6ruC9JZL1gERT1wjtwXFlh7CjE7ZJ+/vcRZRkIYIb6p4g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
+  <section class="wrap page-intro">
+    <span class="eyebrow">Map</span>
+    <h1 class="display h1">Every combo on the map</h1>
+    <p class="lead">Dots are colored by how ready you are, using the skills in your logbook. Tap one for the trip.</p>
+  </section>
+
+  <div class="wrap map-page">
+    <aside class="card filters" aria-label="Map filters">
+      <div class="field">
+        <label for="map-get" class="eyebrow-sm">Get there by</label>
+        <select id="map-get" class="select">
+          <option value="">Any way</option>
+          {MODES.map(m => <option value={m}>{LABEL[m]}</option>)}
+        </select>
+      </div>
+      <div class="field">
+        <label for="map-do" class="eyebrow-sm">When you arrive</label>
+        <select id="map-do" class="select">
+          <option value="">Anything</option>
+          {ACTIVITIES.map(a => <option value={a}>{LABEL[a]}</option>)}
+        </select>
+      </div>
+      <div class="field">
+        <label for="map-month" class="eyebrow-sm">When</label>
+        <select id="map-month" class="select">
+          <option value="0">Any time of year</option>
+          {MONTH_NAMES.map((name, i) => <option value={i + 1}>Good in {name}</option>)}
+        </select>
+      </div>
+      <div class="map-legend" aria-label="Legend">
+        <span><i class="map-dot" data-state="ready"></i>Ready now</span>
+        <span><i class="map-dot" data-state="guided"></i>With a guide</span>
+        <span><i class="map-dot" data-state="goal"></i>Goal trip</span>
+        <span><i class="map-dot" style="background: var(--ink)"></i>Done</span>
+      </div>
+      <span class="mono small muted" id="map-count" aria-live="polite"></span>
+    </aside>
+    <div id="trip-map" class="trip-map" role="region" aria-label="Map of trips"></div>
+  </div>
+
+  <script>
+    import { initMap } from '../lib/map.js';
+    initMap();
+  </script>
+</Base>

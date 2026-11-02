@@ -298,3 +298,37 @@ a.video:hover .video-name { color: var(--accent); }
 .prose h3 { font-size: 28px; }
 .prose img { margin: 1.5em 0; border-radius: 12px; }
 .prose a { color: var(--accent); text-decoration: underline; }
+
+/* Trips done */
+.trip-card[data-done='true'] .photo::after { content: '✓ DONE'; position: absolute; top: 12px; left: 12px; padding: 4px 10px; border-radius: 999px; background: var(--ink); color: var(--paper); font-family: var(--mono); font-size: 11px; font-weight: 500; letter-spacing: 0.1em; }
+.done-form { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 14px 16px; padding: 18px; }
+.done-form .field { flex: 0 1 200px; }
+.done-form .done-note { flex: 1 1 280px; }
+.done-buttons { display: flex; gap: 10px; }
+.done-summary { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; margin: 0; font-size: 16px; }
+.done-summary > svg { color: var(--accent); }
+button.lnk { padding: 0; border: 0; background: none; color: inherit; font: inherit; font-weight: 600; cursor: pointer; }
+
+/* Map */
+.map-page { display: grid; grid-template-columns: minmax(240px, 300px) 1fr; gap: 24px; padding-bottom: 72px; }
+.map-page .filters { align-self: start; }
+.trip-map { height: min(72vh, 760px); min-height: 420px; border-radius: 16px; border: 1px solid var(--rule); background: var(--rule-soft); z-index: 0; }
+.map-legend { display: flex; flex-wrap: wrap; gap: 8px 16px; font-size: 14px; }
+.map-legend span { display: inline-flex; align-items: center; gap: 6px; }
+.map-dot { width: 12px; height: 12px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 0 0 1px rgba(15, 29, 42, 0.35); }
+.map-dot[data-state='ready'] { background: var(--accent); }
+.map-dot[data-state='guided'] { background: var(--blue); }
+.map-dot[data-state='goal'] { background: #8a96a0; }
+.map-pop { display: flex; flex-direction: column; gap: 4px; min-width: 200px; font-family: var(--sans); }
+.map-pop a { font-weight: 600; font-size: 15px; color: var(--ink); }
+.map-pop a:hover { color: var(--accent); }
+.map-pop .small { color: var(--ink-2); }
+@media (max-width: 860px) {
+  .map-page { grid-template-columns: 1fr; }
+  .trip-map { height: 62vh; }
+}
+
+/* Status */
+.status-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 20px; margin-bottom: 40px; }
+.status-tile { padding: 18px; border: 1px solid var(--rule); border-radius: 14px; background: var(--card); }
+.status-tile strong { display: block; font-family: var(--mono); font-size: 28px; font-weight: 500; }

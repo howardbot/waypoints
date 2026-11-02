@@ -1,9 +1,9 @@
 ---
 import Base from '../layouts/Base.astro';
 import Icon from '../components/Icon.astro';
-import TripCard from '../components/TripCard.astro';
-import { TRIPS, LABEL, MODES, ACTIVITIES, REGIONS } from '../data/trips.js';
+import { LABEL, MODES, ACTIVITIES, REGIONS } from '../data/meta.js';
 import { TRACKS } from '../data/skills.js';
+import { MONTH_NAMES } from '../lib/season.js';
 
 const groups = [
   { pref: 'get', legend: '1 · Get there by', options: MODES },
@@ -25,6 +25,10 @@ const tabs = [
 
   <div class="wrap discover">
     <aside class="card filters" aria-label="Filters">
+      <div class="field">
+        <label for="search" class="eyebrow-sm">Search</label>
+        <input id="search" class="input" type="search" placeholder="Place, trip or activity: Japan, lobster…" autocomplete="off" />
+      </div>
       {groups.map(group => (
         <fieldset>
           <legend class="eyebrow-sm">{group.legend}</legend>
@@ -42,6 +46,14 @@ const tabs = [
         <label for="region" class="eyebrow-sm">3 · Where</label>
         <select id="region" class="select">
           {REGIONS.map(r => <option value={r.id}>{r.label}</option>)}
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="month" class="eyebrow-sm">4 · When</label>
+        <select id="month" class="select">
+          <option value="0">Any time of year</option>
+          {MONTH_NAMES.map((name, i) => <option value={i + 1}>Good in {name}</option>)}
         </select>
       </div>
 
@@ -83,9 +95,8 @@ const tabs = [
         <span class="muted">Try another region or readiness tab, or clear your filters.</span>
       </div>
 
-      <div class="grid-cards dense" id="results">
-        {TRIPS.map(trip => <TripCard trip={trip} match />)}
-      </div>
+      <div class="grid-cards dense" id="results" aria-busy="true"></div>
+      <noscript><p class="empty-row">Discover needs JavaScript to rank trips for you.</p></noscript>
       <button type="button" class="btn btn-outline btn-block" id="more" hidden>Show more</button>
     </div>
   </div>

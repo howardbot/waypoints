@@ -1,6 +1,8 @@
 ---
-// A trip photo: your own (`image`), the Commons one from photos.js, or a contour-line placeholder.
+// A trip photo: your own (`image`), the Commons one from photos.js (served from this site
+// once the server has downloaded it), or a contour-line placeholder.
 import Icon from './Icon.astro';
+import { localize } from '../lib/local-photo.js';
 
 interface Props {
   label: string;
@@ -14,7 +16,8 @@ interface Props {
   class?: string;
 }
 
-const { label, tone = '#1c3346', image, photo, sizes = '(min-width: 1240px) 400px, (min-width: 700px) 50vw, 100vw', height = 176, isNew = false, eager = false, class: className } = Astro.props;
+const { label, tone = '#1c3346', image, photo: commons, sizes = '(min-width: 1240px) 400px, (min-width: 700px) 50vw, 100vw', height = 176, isNew = false, eager = false, class: className } = Astro.props;
+const photo = localize(commons);
 const src = image ?? photo?.src;
 const srcset = image ? undefined : photo?.srcset || undefined;
 const alt = image ? label : photo?.alt ?? label;

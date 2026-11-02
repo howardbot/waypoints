@@ -4,6 +4,7 @@
 #
 #   refresh.sh            rebuild only if GitHub has new commits   (hourly timer)
 #   refresh.sh --videos   refresh due YouTube videos, then rebuild  (daily timer)
+#   refresh.sh --links    check every trip source link, then rebuild  (monthly timer)
 #   refresh.sh --force    rebuild even if nothing changed
 set -euo pipefail
 
@@ -14,13 +15,17 @@ NODE_IMAGE="node:20-alpine"
 KEY_FILE="$BASE/youtube.env"   # YOUTUBE_API_KEY=..., written by set-youtube-key.sh
 VIDEOS="$BASE/videos.json"     # last good YouTube results, kept outside the repo
 FETCHED="$BASE/videos-fetched.json"  # when each trip's videos were fetched
+LINKS="$BASE/link-status.json" # last source-link check, for the /status/ page
+PHOTOS="$BASE/photos"          # Commons photos downloaded once, served by the site
 BUILT="$BASE/.built-commit"
 
 videos=false
+links=false
 force=false
 for arg in "$@"; do
   case "$arg" in
     --videos) videos=true ;;
+    --links) links=true ;;
     --force) force=true ;;
     *) echo "unknown option: $arg" >&2; exit 2 ;;
   esac
@@ -33,7 +38,7 @@ flock -w 900 9 || { log "Another refresh is still running; skipping"; exit 0; }
 
 git -C "$REPO" fetch -q origin main
 head="$(git -C "$REPO" rev-parse origin/main)"
-if ! $videos && ! $force && [[ -f "$BUILT" && "$(cat "$BUILT")" == "$head" ]]; then
+if ! $videos && ! $links && ! $force && [[ -f "$BUILT" && "$(cat "$BUILT")" == "$head" ]]; then
   exit 0 # nothing new on GitHub
 fi
 git -C "$REPO" reset -q --hard "$head"
@@ -56,6 +61,22 @@ if [[ -f "$VIDEOS" ]]; then
     if [[ -f "$FETCHED" ]]; then cp "$FETCHED" "$REPO/src/data/videos-fetched.json"; fi
   fi
 fi
+
+# The last link check, kept outside the repo like the videos.
+if [[ -f "$LINKS" ]]; then cp "$LINKS" "$REPO/src/data/link-status.json"; fi
+if $links; then
+  if node_run "$NODE_IMAGE" node scripts/check-links.mjs; then
+    cp "$REPO/src/data/link-status.json" "$LINKS"
+  else
+    log "Link check failed; keeping the last result"
+  fi
+fi
+
+# Photos: download any that are missing (only new ones after the first run), then serve them.
+mkdir -p "$PHOTOS"
+node_run -v "$PHOTOS:/photos" "$NODE_IMAGE" node scripts/fetch-photos.mjs /photos || log "Photo download incomplete; pages fall back to Wikimedia for the rest"
+mkdir -p "$REPO/public/photos/commons"
+cp -a "$PHOTOS/." "$REPO/public/photos/commons/"
 
 if $videos; then
   if [[ -f "$KEY_FILE" ]]; then

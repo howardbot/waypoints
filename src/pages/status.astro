@@ -1,0 +1,73 @@
+---
+// Site health, rebuilt every day on the server: source links that broke (monthly check),
+// event dates that have passed, and how many trips have videos and local photos.
+import Base from '../layouts/Base.astro';
+import { TRIPS } from '../data/trips.js';
+import { PHOTOS } from '../data/photos.js';
+import { EVENTS } from '../data/events.js';
+import VIDEOS from '../data/videos.json';
+import LINKS from '../data/link-status.json';
+import { staleEvents, formatRange } from '../lib/events.js';
+import { localize } from '../lib/local-photo.js';
+
+const title = (id: string) => TRIPS.find(t => t.id === id)?.title ?? id;
+const links = LINKS as { checkedAt?: string; total?: number; counts?: Record<string, number>; problems?: any[] };
+const needsLook = (links.problems ?? []).filter(p => p.status !== 'blocked');
+const blocked = (links.problems ?? []).filter(p => p.status === 'blocked');
+const stale = staleEvents();
+const withVideos = TRIPS.filter(t => ((VIDEOS as Record<string, any[]>)[t.id] ?? []).length > 0).length;
+const photos = Object.values(PHOTOS);
+const localPhotos = photos.filter(p => localize(p).src.startsWith('/')).length;
+const builtAt = new Date().toISOString().slice(0, 16).replace('T', ' ');
+const day = (iso?: string) => (iso ? iso.slice(0, 10) : 'not yet');
+---
+<Base title="Status">
+  <section class="wrap page-intro">
+    <span class="eyebrow">Status</span>
+    <h1 class="display h1">Site health</h1>
+    <p class="lead">Rebuilt every day on the server. Source links are checked once a month.</p>
+  </section>
+
+  <section class="wrap" style="padding-bottom: 96px">
+    <div class="status-grid">
+      <div class="status-tile"><strong>{TRIPS.length}</strong>trips</div>
+      <div class="status-tile"><strong>{withVideos}</strong>with YouTube videos</div>
+      <div class="status-tile"><strong>{localPhotos}/{photos.length}</strong>photos served from this site</div>
+      <div class="status-tile"><strong>{links.total ? links.counts?.ok : '—'}</strong>source links OK{links.total ? ` of ${links.total}` : ''}</div>
+      <div class="status-tile"><strong>{stale.length}</strong>events needing new dates</div>
+    </div>
+
+    <h2 class="display h3" style="margin-bottom: 12px">Source links</h2>
+    <p class="muted small">Last checked: {day(links.checkedAt)}. "Blocked" sites refuse automated checks but usually open fine in a browser.</p>
+    {needsLook.length ? (
+      <div class="rows" style="margin-bottom: 24px">
+        {needsLook.map(p => (
+          <div class="row">
+            <a class="row-main lnk" href={p.url} target="_blank" rel="noopener noreferrer">{p.url}</a>
+            <span class="row-meta">{p.trips.map((id: string) => title(id)).join(' · ')}</span>
+            <span class="row-state">{p.status.toUpperCase()} {p.code || p.detail || ''}</span>
+          </div>
+        ))}
+      </div>
+    ) : (
+      <p class="empty-row">{links.checkedAt ? 'No broken links found.' : 'The first check runs on the server this month.'}</p>
+    )}
+    {blocked.length > 0 && <p class="muted small" style="margin-bottom: 40px">{blocked.length} links blocked automated checks.</p>}
+
+    <h2 class="display h3" style="margin: 24px 0 12px">Event dates</h2>
+    {stale.length ? (
+      <div class="rows">
+        {stale.map(e => (
+          <a class="row" href={`/trips/${e.id}/`}>
+            <span class="row-main">{title(e.id)}</span>
+            <span class="row-meta">Last: {e.last && formatRange(e.last.start, e.last.end)}</span>
+            <span class="row-state">ADD NEXT DATES</span>
+          </a>
+        ))}
+      </div>
+    ) : (
+      <p class="empty-row">Every dated event has an upcoming date.</p>
+    )}
+    <p class="small muted" style="margin-top: 32px">{Object.keys(EVENTS).length} trips have dated events · built {builtAt} UTC</p>
+  </section>
+</Base>

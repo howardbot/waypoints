@@ -217,7 +217,7 @@ export const SHORE = [
     title: "Catch spiny lobster in Florida's mini-season",
     place: 'Florida Keys, Florida',
     region: 'us-southeast',
-    season: 'Last Wednesday and Thursday of July (2027: July 28–29)',
+    season: 'Last Wednesday and Thursday of July',
     length: 'Weekend',
     get: ['drive', 'boat'],
     do: ['forage', 'snorkel'],

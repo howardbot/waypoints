@@ -1334,7 +1334,7 @@ export const RESEARCHED = [
     summary: 'A yearly conference from Crowd Supply for people who design, hack and build hardware, with talks and hands-on sessions, close to the waterfalls of the Columbia River Gorge.',
     glance: [
       ['Focus', 'Open hardware, electronics, hacking and making'],
-      ['When', 'Yearly in summer (2026: July 24–26)'],
+      ['When', 'Yearly in summer'],
       ['Nearby', 'Columbia River Gorge waterfall hikes'],
     ],
     headsUp: 'Some popular Gorge trailheads need timed-use permits or a shuttle in summer.',
@@ -1475,7 +1475,7 @@ export const RESEARCHED = [
     title: 'Camp under the wing at the Triple Tree Fly-In',
     place: 'Triple Tree Aerodrome, Woodruff, South Carolina',
     region: 'us-southeast',
-    season: 'Late September (2026: September 21–27)',
+    season: 'Late September (yearly)',
     length: '3–5 days',
     get: ['fly', 'drive'],
     do: ['camp', 'views'],
@@ -1496,6 +1496,7 @@ export const RESEARCHED = [
     sources: [
       { label: 'Triple Tree Airport, South Carolina Aeronautics Commission', url: 'https://aeronautics.sc.gov/airports/triple-tree-airport' },
       { label: 'Triple Tree Fly-In, AOPA', url: 'https://www.aopa.org/community/triple-tree/' },
+      { label: 'Event calendar, Triple Tree Aerodrome', url: 'https://tta.aero/' },
     ],
     youtube: ['Triple Tree Fly In camping'],
     via: 'chatgpt',
@@ -1972,7 +1973,7 @@ export const RESEARCHED = [
     title: 'Spend a week at a Port Townsend woodworking school',
     place: 'Port Townsend and Port Hadlock, Washington, USA',
     region: 'us-west',
-    season: 'Summer (2026 timber framing: June 22–27; Wooden Boat Festival in September)',
+    season: 'Summer, with the Wooden Boat Festival in September',
     length: 'A week',
     get: ['drive'],
     do: ['make', 'camp', 'views'],
@@ -2005,7 +2006,7 @@ export const RESEARCHED = [
     title: 'Spend three days at embedded world in Nuremberg',
     place: 'Nuremberg, Germany',
     region: 'europe',
-    season: 'March (2027: March 16–18)',
+    season: 'March (yearly)',
     length: '3–5 days',
     get: ['train'],
     do: ['make'],
@@ -2018,9 +2019,9 @@ export const RESEARCHED = [
     },
     summary: 'embedded world is a big professional exhibition and conference for embedded hardware and software, with conference categories from hardware and SoC/IP/IC design to embedded vision, safety and security, and tools.',
     glance: [
-      ['When', 'March 16–18, 2027'],
       ['Format', 'Exhibition plus conference'],
       ['Tracks', 'Hardware, SoC/IP/IC design, tools and more'],
+      ['When', 'Every March'],
     ],
     headsUp: 'Check the current programme and ticket types before you book travel.',
     sources: [
@@ -2603,7 +2604,7 @@ export const RESEARCHED = [
     title: 'Hack the badge at Hackaday Supercon in Pasadena',
     place: 'Pasadena, California, USA',
     region: 'us-west',
-    season: 'November (2026: November 6–8)',
+    season: 'November (yearly)',
     length: '3–5 days',
     get: ['drive'],
     do: ['make', 'views'],
@@ -2616,9 +2617,9 @@ export const RESEARCHED = [
     },
     summary: 'Supercon is Hackaday\'s hardware conference: three days of hacking, talks, workshops and badge hacking in Pasadena. Add a trip up to Mount Wilson Observatory, where Edwin Hubble used the 100-inch Hooker telescope, and which still runs public telescope nights.',
     glance: [
-      ['When', 'November 6–8, 2026'],
       ['Format', 'Talks, workshops, badge hacking'],
       ['Side trip', 'Mount Wilson Observatory'],
+      ['Where', 'Pasadena'],
     ],
     headsUp: 'Check ticket availability early, and the observatory\'s calendar for public nights.',
     sources: [
@@ -2681,7 +2682,7 @@ export const RESEARCHED = [
     glance: [
       ['Base', 'Sailing boat as floating lodge'],
       ['Each day', 'Sail, skin up, ski down'],
-      ['Departures', 'April and May (SeilNorge, 2027)'],
+      ['Departures', 'April and May'],
     ],
     headsUp: 'Avalanche terrain and Arctic weather make a professional mountain guide essential unless you\'re an experienced ski mountaineer.',
     sources: [
@@ -3196,7 +3197,7 @@ export const RESEARCHED = [
     title: 'Ride Ladakh\'s high roads during Ladakh Bike Week',
     place: 'Leh, Ladakh, India',
     region: 'asia',
-    season: 'September (2026: September 1–7)',
+    season: 'September',
     length: 'A week',
     get: ['drive'],
     do: ['views'],
@@ -3217,6 +3218,7 @@ export const RESEARCHED = [
     sources: [
       { label: 'Events, Ladakh Tourism', url: 'https://tourism.ladakh.gov.in/events' },
       { label: 'Inaugural Ladakh Bike Week 2026, UT Ladakh Administration', url: 'https://ladakh.gov.in/l-g-vk-saxena-flags-off-the-inaugural-ladakh-bike-week-2026/' },
+      { label: 'Ladakh Bike Week MoU (September 1–7 yearly), UT Ladakh Administration', url: 'https://ladakh.gov.in/on-l-g-vk-saxenas-initiative-ut-administration-signs-tripartite-mou-for-ladakh-bike-week/' },
     ],
     youtube: ['Ladakh motorcycle ride'],
     via: 'chatgpt',
@@ -3368,7 +3370,7 @@ export const RESEARCHED = [
     glance: [
       ['Distance', '1,365 km'],
       ['Time', 'About 32 hours'],
-      ['2026–27 season', 'December 21 – March 10'],
+      ['Season', 'Winter, December to March'],
     ],
     headsUp: 'It\'s seasonal and popular; check TCDD\'s current schedule and book early.',
     sources: [
@@ -4537,7 +4539,7 @@ export const RESEARCHED = [
     title: 'Camp with hackers at the Chaos Communication Camp',
     place: 'Near Berlin, Germany',
     region: 'europe',
-    season: 'Summer, every four years (last held 2023)',
+    season: 'Summer, every four years',
     length: 'A week',
     get: ['train'],
     do: ['make', 'camp'],

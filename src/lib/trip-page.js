@@ -1,6 +1,62 @@
-// Trip page: save the YouTube (or any) videos that inspired a trip.
-import { getVideos, addVideo, removeVideo } from './store.js';
+// Trip page: mark the trip done (it goes into your logbook), and save the YouTube (or any)
+// videos that inspired it.
+import { getVideos, addVideo, removeVideo, getDone, setDone, clearDone } from './store.js';
 import { ICONS } from './icons.js';
+
+const today = () => new Date().toLocaleDateString('en-CA'); // YYYY-MM-DD in your time zone
+const longDate = iso =>
+  new Date(`${iso}T12:00:00`).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+
+function initDone() {
+  const open = document.querySelector('.js-done-open');
+  const form = document.querySelector('.js-done-form');
+  const summary = document.querySelector('.js-done-summary');
+  if (!open || !form || !summary) return;
+  const tripId = open.dataset.tripDone;
+  const date = form.querySelector('#done-date');
+  const note = form.querySelector('#done-note');
+  let editing = false;
+
+  const render = () => {
+    const entry = getDone()[tripId];
+    open.hidden = Boolean(entry) || editing;
+    form.hidden = !editing;
+    summary.hidden = !entry || editing;
+    if (entry) {
+      summary.querySelector('.js-done-text').textContent =
+        [entry.date && `· ${longDate(entry.date)}`, entry.note && `· ${entry.note}`].filter(Boolean).join(' ');
+    }
+  };
+  const edit = () => {
+    const entry = getDone()[tripId];
+    date.value = entry?.date || today();
+    note.value = entry?.note || '';
+    editing = true;
+    render();
+    date.focus();
+  };
+
+  open.addEventListener('click', edit);
+  summary.querySelector('.js-done-edit').addEventListener('click', edit);
+  summary.querySelector('.js-done-remove').addEventListener('click', () => clearDone(tripId));
+  form.querySelector('.js-done-cancel').addEventListener('click', () => {
+    editing = false;
+    render();
+  });
+  form.addEventListener('submit', event => {
+    event.preventDefault();
+    if (!date.value) {
+      date.setAttribute('aria-invalid', 'true');
+      return;
+    }
+    date.removeAttribute('aria-invalid');
+    editing = false;
+    setDone(tripId, { date: date.value, note: note.value.trim() });
+  });
+  window.addEventListener('waypoints:change', render);
+  window.addEventListener('storage', render);
+  render();
+}
 
 function isWebUrl(value) {
   try {
@@ -85,6 +141,7 @@ function videoCard(url, index) {
 }
 
 export function initTripPage() {
+  initDone();
   const root = document.querySelector('[data-videos]');
   if (!root) return;
   const tripId = root.dataset.videos;

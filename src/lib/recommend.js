@@ -1,4 +1,5 @@
 import { TRACKS } from '../data/skills.js';
+import { LABEL, REGIONS } from '../data/meta.js';
 
 export const STATE_LABEL = { ready: 'Ready now', guided: 'With a guide', goal: 'Goal trip' };
 const STATE_BONUS = { ready: 20, guided: 14, goal: 6 };
@@ -33,6 +34,27 @@ export function inRegion(trip, region) {
   return region === 'us' && trip.region.startsWith('us-');
 }
 
+/** month: 1–12, or 0/empty for any month. Trips carry `months` (see lib/season.js). */
+export function inMonth(trip, month) {
+  return !Number(month) || (trip.months ?? []).includes(Number(month));
+}
+
+/** Everything a search box should find a trip by, lowercased. */
+export function searchText(trip) {
+  const region = REGIONS.find(r => r.id === trip.region)?.label ?? '';
+  return [trip.title, trip.short, trip.place, region, ...trip.get.map(m => LABEL[m]), ...trip.do.map(a => LABEL[a])]
+    .join(' ')
+    .toLowerCase();
+}
+
+/** Every word of the query has to appear somewhere in the trip's search text. */
+export function matchesQuery(trip, query) {
+  const words = String(query ?? '').toLowerCase().split(/\s+/).filter(Boolean);
+  if (!words.length) return true;
+  const text = searchText(trip);
+  return words.every(w => text.includes(w));
+}
+
 /**
  * Score one trip against what you picked (prefs.get, prefs.do) and your skills.
  * Up to 35 for a matching way there, 40 for the activities, 20 for readiness,
@@ -49,10 +71,13 @@ export function scoreTrip(trip, prefs, skills) {
   return { state, score: Math.max(5, Math.min(99, score)), hits: [...getHits, ...doHits] };
 }
 
-/** Rank trips for the Discover page. Counts cover the region before the readiness tab is applied. */
+/**
+ * Rank trips for the Discover page. Region, month and search filter first; the counts
+ * cover what's left before the readiness tab is applied.
+ */
 export function recommend(trips, prefs, skills) {
   const scored = trips
-    .filter(t => inRegion(t, prefs.region))
+    .filter(t => inRegion(t, prefs.region) && inMonth(t, prefs.month) && matchesQuery(t, prefs.q))
     .map(trip => ({ trip, ...scoreTrip(trip, prefs, skills) }));
   const counts = { all: scored.length, ready: 0, guided: 0, goal: 0 };
   for (const s of scored) counts[s.state] += 1;

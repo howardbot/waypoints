@@ -1,4 +1,4 @@
-// Per-browser state: your skill levels, saved trips and saved videos.
+// Per-browser state: your skill levels, saved trips, trips you've done and saved videos.
 // Falls back to memory when localStorage is unavailable (private mode, blocked storage).
 import { TRACKS, DEFAULT_SKILLS } from '../data/skills.js';
 
@@ -52,6 +52,27 @@ export function toggleSaved(id) {
   update(data => {
     const saved = strings(data.saved);
     data.saved = saved.includes(id) ? saved.filter(x => x !== id) : [...saved, id];
+  });
+}
+
+const doneMap = value => (value && typeof value === 'object' && !Array.isArray(value) ? value : {});
+
+/** Trips you've done: { [tripId]: { date: 'YYYY-MM-DD', note } }. */
+export function getDone() {
+  return doneMap(read().done);
+}
+
+export function setDone(id, { date = '', note = '' } = {}) {
+  update(data => {
+    data.done = { ...doneMap(data.done), [id]: { date: String(date), note: String(note) } };
+  });
+}
+
+export function clearDone(id) {
+  update(data => {
+    const done = { ...doneMap(data.done) };
+    delete done[id];
+    data.done = done;
   });
 }
 

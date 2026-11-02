@@ -1,18 +1,24 @@
-// Discover page: every trip card is already in the HTML; this script scores
-// them, hides the ones filtered out and puts the rest in ranked order.
-import { TRIPS, LABEL, MODES, ACTIVITIES, REGIONS } from '../data/trips.js';
+// Discover page: loads the slim trip list, ranks it for your picks and skills, and builds
+// the cards for the best matches (18 at a time).
+import { LABEL, MODES, ACTIVITIES, REGIONS } from '../data/meta.js';
 import { recommend } from './recommend.js';
 import { getSkills, setSkill } from './store.js';
+import { loadTrips } from './trip-data.js';
+import { tripCard } from './cards.js';
+import { syncAll } from './client.js';
 
 function readPrefs() {
   const params = new URLSearchParams(location.search);
   const list = (key, allowed) => (params.get(key) || '').split(',').filter(v => allowed.includes(v));
-  const fromLink = params.has('get') || params.has('do');
+  const fromLink = ['get', 'do', 'q', 'month', 'region'].some(k => params.has(k));
   const region = params.get('region');
+  const month = Number(params.get('month'));
   return {
     get: fromLink ? list('get', MODES) : ['fly'],
     do: fromLink ? list('do', ACTIVITIES) : ['camp'],
     region: REGIONS.some(r => r.id === region) ? region : 'any',
+    month: month >= 1 && month <= 12 ? month : 0,
+    q: params.get('q') || '',
     surprise: true,
     tab: 'all',
   };
@@ -25,19 +31,27 @@ function whyText(result, prefs) {
   return prefs.surprise && result.trip.isNew ? `New to you · ${text}` : text;
 }
 
-export function initDiscover() {
+export async function initDiscover() {
   const grid = document.getElementById('results');
   if (!grid) return;
-  const cards = new Map([...grid.querySelectorAll('[data-trip-id]')].map(el => [el.dataset.tripId, el]));
   const empty = document.getElementById('empty');
   const summary = document.getElementById('summary');
+  const search = document.getElementById('search');
   const region = document.getElementById('region');
+  const month = document.getElementById('month');
   const surprise = document.getElementById('surprise');
   const skillSelects = [...document.querySelectorAll('select[data-skill]')];
   const more = document.getElementById('more');
   const PAGE = 18;
+  const cards = new Map();
+  let trips = [];
   let prefs = readPrefs();
   let limit = PAGE;
+
+  const cardFor = trip => {
+    if (!cards.has(trip.id)) cards.set(trip.id, tripCard(trip, { match: true }));
+    return cards.get(trip.id);
+  };
 
   // Any filter change starts the list over at the best matches.
   function update(changes) {
@@ -48,7 +62,7 @@ export function initDiscover() {
 
   function render() {
     const skills = getSkills();
-    const { results, counts } = recommend(TRIPS, prefs, skills);
+    const { results, counts } = recommend(trips, prefs, skills);
 
     document.querySelectorAll('.chip[data-pref]').forEach(chip => {
       chip.setAttribute('aria-pressed', String(prefs[chip.dataset.pref].includes(chip.dataset.value)));
@@ -58,24 +72,25 @@ export function initDiscover() {
       const count = tab.querySelector('.js-count');
       if (count) count.textContent = String(counts[tab.dataset.tab]);
     });
+    if (document.activeElement !== search) search.value = prefs.q;
     region.value = prefs.region;
+    month.value = String(prefs.month);
     surprise.checked = prefs.surprise;
     skillSelects.forEach(select => {
       select.value = skills[select.dataset.skill];
     });
 
-    const visible = results.slice(0, limit);
-    const shown = new Set(visible.map(r => r.trip.id));
-    cards.forEach((card, id) => {
-      card.hidden = !shown.has(id);
-    });
-    for (const result of visible) {
-      const card = cards.get(result.trip.id);
+    const visible = results.slice(0, limit).map(result => {
+      const card = cardFor(result.trip);
       card.querySelector('.js-score').textContent = `${result.score}% match`;
       card.querySelector('.js-bar').style.width = `${result.score}%`;
       card.querySelector('.js-why').textContent = whyText(result, prefs);
-      grid.appendChild(card);
-    }
+      return card;
+    });
+    grid.replaceChildren(...visible);
+    grid.removeAttribute('aria-busy');
+    syncAll();
+
     empty.hidden = results.length > 0;
     summary.textContent = `${results.length} ${results.length === 1 ? 'combo' : 'combos'}, best match first`;
     const remaining = results.length - visible.length;
@@ -84,6 +99,8 @@ export function initDiscover() {
 
     const params = new URLSearchParams({ get: prefs.get.join(','), do: prefs.do.join(',') });
     if (prefs.region !== 'any') params.set('region', prefs.region);
+    if (prefs.month) params.set('month', String(prefs.month));
+    if (prefs.q) params.set('q', prefs.q);
     history.replaceState(null, '', `?${params}`);
   }
 
@@ -97,18 +114,27 @@ export function initDiscover() {
   document.querySelectorAll('.tab[data-tab]').forEach(tab => {
     tab.addEventListener('click', () => update({ tab: tab.dataset.tab }));
   });
+  search.addEventListener('input', () => update({ q: search.value.trim() }));
   region.addEventListener('change', () => update({ region: region.value }));
+  month.addEventListener('change', () => update({ month: Number(month.value) }));
   surprise.addEventListener('change', () => update({ surprise: surprise.checked }));
   skillSelects.forEach(select => {
     select.addEventListener('change', () => setSkill(select.dataset.skill, select.value));
   });
   document.getElementById('reset')?.addEventListener('click', () => {
-    update({ get: [], do: [], region: 'any', surprise: true, tab: 'all' });
+    update({ get: [], do: [], region: 'any', month: 0, q: '', surprise: true, tab: 'all' });
   });
   more.addEventListener('click', () => {
     limit += PAGE;
     render();
   });
+
+  try {
+    trips = await loadTrips();
+  } catch {
+    summary.textContent = "Couldn't load the trips; try reloading the page.";
+    return;
+  }
   window.addEventListener('waypoints:change', render);
   window.addEventListener('storage', render);
   render();
